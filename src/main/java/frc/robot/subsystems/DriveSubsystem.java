@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.filter.MedianFilter;
@@ -14,6 +16,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -73,6 +76,12 @@ public class DriveSubsystem extends SubsystemBase {
     m_drive.arcadeDrive(fwd*DriveConstants.kMaxDriveSpeed, rot*DriveConstants.kMaxDriveSpeed);
   }
 
+  public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
+    return run(
+      () -> m_drive.arcadeDrive(
+        DriveConstants.kMaxDriveSpeed*fwd.getAsDouble(),
+        DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
+  }
   @Override
   public void periodic(){}
 }
