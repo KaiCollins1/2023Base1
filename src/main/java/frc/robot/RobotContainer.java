@@ -29,10 +29,9 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, m_robotDrive.arcadeDriveCommand(
       ()->m_controller.getLeftY(), 
       ()->m_controller.getRightX()));
-    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultMovementCommand(
-      ()->m_controller.getLeftBumper(), 
-      ()->m_controller.getRightBumper()));
+    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultHoldCommand());
 
+    m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
