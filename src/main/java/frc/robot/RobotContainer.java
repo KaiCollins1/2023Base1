@@ -31,7 +31,6 @@ public class RobotContainer {
     // Configure default commands
     CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, new TelopDriveCommand(m_robotDrive));
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, new ArmMoveCommand(m_armSubsystem));
-    SmartDashboard.putBoolean("defaultsSet?", true);
   }
 
   /**
