@@ -17,7 +17,6 @@ public class ArmSubsystem extends SubsystemBase {
   DigitalInput lowerLimit = new DigitalInput(ArmConstants.klowerLimitSwitchPort);
   DigitalInput upperLimit = new DigitalInput(ArmConstants.kupperLimitSwitchPort);
   Spark armMotor = new Spark(ArmConstants.kArmMotorPort);
-  double armSpeed = 0;
 
   SlewRateLimiter armLimiter = new SlewRateLimiter(.7);
 
@@ -36,13 +35,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmSpeed(double speed){
-    armSpeed = armLimiter.calculate(speed);
+    armMotor.set(armLimiter.calculate(speed));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    armMotor.set(armSpeed);
     SmartDashboard.putNumber("ArmSpeed", armSpeed);
     SmartDashboard.putBoolean("UpperLimit", upperSwitched());
     SmartDashboard.putBoolean("LowerLimit", lowerSwitched());
