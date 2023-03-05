@@ -73,13 +73,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void arcadeDrive(double fwd, double rot) {
-    m_fwd = fwd;
-    m_rot = rot;
+    m_drive.arcadeDrive(fwd, rot);
   }
 
   @Override
   public void periodic(){
-    m_drive.arcadeDrive(m_fwd, m_rot);
     SmartDashboard.putNumber("m_fwd", m_fwd);
     SmartDashboard.putNumber("m_rot", m_rot);
   }
