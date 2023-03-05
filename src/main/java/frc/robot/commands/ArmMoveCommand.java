@@ -7,18 +7,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ControllerSubsystem;
 
 public class ArmMoveCommand extends CommandBase {
 
   ArmSubsystem m_armSubsystem;
-  ControllerSubsystem m_controllerSubsystem;
   /** Creates a new ArmMoveCommand. */
-  public ArmMoveCommand(ArmSubsystem armSubsystem, ControllerSubsystem controllerSubsystem) {
+  public ArmMoveCommand(ArmSubsystem armSubsystem) {
     m_armSubsystem = armSubsystem;
-    m_controllerSubsystem = controllerSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_armSubsystem, m_controllerSubsystem);
+    addRequirements(m_armSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -30,13 +27,13 @@ public class ArmMoveCommand extends CommandBase {
   public void execute() {
 
     if(!m_armSubsystem.upperSwitched()){
-      if(m_controllerSubsystem.getDownDpad()){
+      if(m_armSubsystem.m_controller.getPOV() == 180 ? true : false){
         m_armSubsystem.setArmSpeed(-.2 * ArmConstants.kArmInverted);
       }
     }
 
     if(!m_armSubsystem.lowerSwitched()){
-      if(m_controllerSubsystem.getUpDpad()){
+      if(m_armSubsystem.m_controller.getPOV() == 0 ? true : false){
         m_armSubsystem.setArmSpeed(.2 * ArmConstants.kArmInverted);
       }
     }

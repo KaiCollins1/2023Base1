@@ -4,7 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -15,6 +20,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
   // The motors on the left side of the drive.
+
+  public final AHRS gyro = new AHRS(SPI.Port.kMXP);
+
+  public final MedianFilter rateFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  public final MedianFilter angleFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  public final MedianFilter pitchFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  public final MedianFilter yawFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  public final MedianFilter rollFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
 
   private final MotorControllerGroup leftMotors =
       new MotorControllerGroup(
@@ -29,6 +42,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   SlewRateLimiter fwdLimiter = new SlewRateLimiter(.5);
   SlewRateLimiter rotLimiter = new SlewRateLimiter(.5);
+  
+  public XboxController m_controller;
 
   private double m_fwd = 0;
   private double m_rot = 0;
@@ -42,11 +57,25 @@ public class DriveSubsystem extends SubsystemBase {
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  public DriveSubsystem(XboxController controller) {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
+    m_controller = controller;
     rightMotors.setInverted(true);
+    zeroHeading();
+  }
+
+  public void zeroHeading(){
+    gyro.reset();
+  }
+
+  public double getAngle(){
+    return angleFilter.calculate(gyro.getAngle() % 360)*(DriveConstants.kGyroReversed ? -1 : 1);
+  }
+
+  public double getPitch(){
+    return pitchFilter.calculate(gyro.getPitch())*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   public void arcadeDrive(double fwd, double rot) {

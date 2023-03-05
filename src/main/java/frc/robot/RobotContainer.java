@@ -7,12 +7,9 @@ package frc.robot;
 import frc.robot.commands.ArmMoveCommand;
 import frc.robot.commands.TelopDriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ControllerSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.GyroSubsystem;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import frc.robot.subsystems.ArmSubsystem;
-//import frc.robot.subsystems.GyroSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,16 +22,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final ControllerSubsystem m_controllerSubsystem = new ControllerSubsystem();
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  private final GyroSubsystem m_GyroSubsystem = new GyroSubsystem();
+  XboxController controller = new XboxController(0);
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem(controller);
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure default commands
-    CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, new TelopDriveCommand(m_robotDrive, m_controllerSubsystem));
-    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, new ArmMoveCommand(m_armSubsystem, m_controllerSubsystem));
+    CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, new TelopDriveCommand(m_robotDrive));
+    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, new ArmMoveCommand(m_armSubsystem));
     SmartDashboard.putBoolean("defaultsSet?", true);
   }
 
