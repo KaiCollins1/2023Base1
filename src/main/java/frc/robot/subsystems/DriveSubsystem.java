@@ -44,9 +44,6 @@ public class DriveSubsystem extends SubsystemBase {
   
   public XboxController m_controller;
 
-  private double m_fwd = 0;
-  private double m_rot = 0;
-
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
 
@@ -77,8 +74,5 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic(){
-    SmartDashboard.putNumber("m_fwd", m_fwd);
-    SmartDashboard.putNumber("m_rot", m_rot);
-  }
+  public void periodic(){}
 }
