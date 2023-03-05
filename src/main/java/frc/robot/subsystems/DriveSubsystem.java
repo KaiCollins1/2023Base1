@@ -11,7 +11,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -44,17 +43,15 @@ public class DriveSubsystem extends SubsystemBase {
   SlewRateLimiter fwdLimiter = new SlewRateLimiter(1.2);
   SlewRateLimiter rotLimiter = new SlewRateLimiter(1.2);
   
-  public XboxController m_controller;
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem(XboxController controller) {
+  public DriveSubsystem() {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_controller = controller;
     rightMotors.setInverted(true);
     zeroHeading();
   }
