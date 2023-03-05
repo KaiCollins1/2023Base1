@@ -6,10 +6,10 @@ package frc.robot;
 
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems
-  XboxController m_controller = new XboxController(0);
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_controller);
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_controller);
+  CommandXboxController m_controller = new CommandXboxController(0);
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
