@@ -8,11 +8,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,11 +21,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   SlewRateLimiter armLimiter = new SlewRateLimiter(.7);
 
-  public XboxController m_controller;
-  
-  public ArmSubsystem(XboxController controller) {
-    m_controller = controller;
-  }
+  public ArmSubsystem() {}
 
   public boolean lowerSwitched(){
     return lowerLimit.get();
@@ -38,14 +31,23 @@ public class ArmSubsystem extends SubsystemBase {
     return upperLimit.get();
   }
 
-  public CommandBase armDefaultMovementCommand(BooleanSupplier lBumper, BooleanSupplier rBumper){
-    if(lBumper.getAsBoolean()){
-      return run(()->armMotor.set(.35)).withName("armUp");
-    }else if(rBumper.getAsBoolean()){
-      return run(()->armMotor.set(-.2)).withName("armDown");
-    }else{
-      return run(()->armMotor.set(.17)).withName("armHold");
-    }
+  public CommandBase armDefaultHoldCommand(){
+    // if(lBumper.getAsBoolean()){
+    //   return run(()->armMotor.set(.35)).withName("armUp");
+    // }else if(rBumper.getAsBoolean()){
+    //   return run(()->armMotor.set(-.2)).withName("armDown");
+    // }else{
+    //   return run(()->armMotor.set(.17)).withName("armHold");
+    // }
+    return run(()->armMotor.set(.17)).withName("armHold");
+  }
+
+  public CommandBase armUpCommand(){
+    return run(()->armMotor.set(.35)).withName("armUp");
+  }
+
+  public CommandBase armDownCommand(){
+    return run(()->armMotor.set(-.2)).withName("armDown");
   }
 
   @Override
