@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -21,7 +22,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   SlewRateLimiter armLimiter = new SlewRateLimiter(.7);
 
-  public ArmSubsystem() {
+  public XboxController m_controller;
+  
+  public ArmSubsystem(XboxController controller) {
+    m_controller = controller;
   }
 
   public boolean lowerSwitched(){
