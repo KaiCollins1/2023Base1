@@ -32,6 +32,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultHoldCommand());
 
     m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
+    m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
