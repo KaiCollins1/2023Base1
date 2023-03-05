@@ -41,7 +41,6 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("ArmSpeed", armSpeed);
     SmartDashboard.putBoolean("UpperLimit", upperSwitched());
     SmartDashboard.putBoolean("LowerLimit", lowerSwitched());
   }
