@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -32,6 +33,8 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultMovementCommand(
       ()->m_controller.getLeftBumper(), 
       ()->m_controller.getLeftTriggerAxis()));
+
+    CameraServer.startAutomaticCapture();
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
