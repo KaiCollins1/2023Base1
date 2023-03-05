@@ -35,7 +35,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmSpeed(double speed){
-    armMotor.set(armLimiter.calculate(speed));
+    armMotor.set(speed);
   }
 
   @Override

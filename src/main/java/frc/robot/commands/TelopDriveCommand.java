@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.DriveSubsystem;
-import java.lang.Math;
+//import java.lang.Math;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -31,8 +31,10 @@ public class TelopDriveCommand extends CommandBase {
   @Override
   public void execute() {
     //squares input in second term. first term re-multiplies the negative if there was one bc squaring removes the negative
-    m_fwd = (m_driveSubsystem.m_controller.getLeftY() > 0 ? 1 : -1) * (-Math.pow(m_driveSubsystem.m_controller.getLeftY(), 2));
-    m_rot = -(m_driveSubsystem.m_controller.getRightX() > 0 ? 1 : -1) * (Math.pow(m_driveSubsystem.m_controller.getRightX(), 2));
+    //m_fwd = (m_driveSubsystem.m_controller.getLeftY() > 0 ? 1 : -1) * (-Math.pow(m_driveSubsystem.m_controller.getLeftY(), 2));
+    //m_rot = -(m_driveSubsystem.m_controller.getRightX() > 0 ? 1 : -1) * (Math.pow(m_driveSubsystem.m_controller.getRightX(), 2));
+    m_fwd = -m_driveSubsystem.m_controller.getLeftY();
+    m_rot = -m_driveSubsystem.m_controller.getRightX();
     m_driveSubsystem.arcadeDrive(m_fwd, m_rot);
   }
 

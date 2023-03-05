@@ -26,17 +26,13 @@ public class ArmMoveCommand extends CommandBase {
   @Override
   public void execute() {
 
-    if(!m_armSubsystem.upperSwitched()){
       if(m_armSubsystem.m_controller.getPOV() == 180 ? true : false){
         m_armSubsystem.setArmSpeed(-.2 * ArmConstants.kArmInverted);
+      }else if(m_armSubsystem.m_controller.getPOV() == 0 ? true : false){
+        m_armSubsystem.setArmSpeed(.35 * ArmConstants.kArmInverted);
+      }else {
+        m_armSubsystem.setArmSpeed(.17);
       }
-    }
-
-    if(!m_armSubsystem.lowerSwitched()){
-      if(m_armSubsystem.m_controller.getPOV() == 0 ? true : false){
-        m_armSubsystem.setArmSpeed(.2 * ArmConstants.kArmInverted);
-      }
-    }
 
   }
 

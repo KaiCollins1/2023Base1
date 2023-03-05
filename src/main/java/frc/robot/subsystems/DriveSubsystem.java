@@ -38,8 +38,8 @@ public class DriveSubsystem extends SubsystemBase {
           new Spark(DriveConstants.rightBackPort),
           new Spark(DriveConstants.rightFrontPort));
 
-  SlewRateLimiter fwdLimiter = new SlewRateLimiter(.5);
-  SlewRateLimiter rotLimiter = new SlewRateLimiter(.5);
+  SlewRateLimiter fwdLimiter = new SlewRateLimiter(1.2);
+  SlewRateLimiter rotLimiter = new SlewRateLimiter(1.2);
   
   public XboxController m_controller;
 
@@ -69,7 +69,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void arcadeDrive(double fwd, double rot) {
-    m_drive.arcadeDrive(fwd, rot);
+    //m_drive.arcadeDrive(fwdLimiter.calculate(fwd*DriveConstants.kMaxDriveSpeed), rotLimiter.calculate(rot*DriveConstants.kMaxDriveSpeed));
+    m_drive.arcadeDrive(fwd*DriveConstants.kMaxDriveSpeed, rot*DriveConstants.kMaxDriveSpeed);
   }
 
   @Override
