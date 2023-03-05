@@ -15,7 +15,7 @@ package frc.robot;
 public final class Constants {
   public static final class DriveConstants {
     public static final int rightBackPort = 2;
-    public static final int rightFrontPort = 1;
+    public static final int rightFrontPort = 5;
     public static final int leftBackPort = 3;
     public static final int leftFrontPort = 4;
 
