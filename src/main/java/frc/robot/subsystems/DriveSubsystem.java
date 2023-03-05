@@ -79,8 +79,8 @@ public class DriveSubsystem extends SubsystemBase {
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
     return run(
       () -> m_drive.arcadeDrive(
-        DriveConstants.kMaxDriveSpeed*fwd.getAsDouble(),
-        DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
+        -DriveConstants.kMaxDriveSpeed*fwd.getAsDouble(),
+        -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
   @Override
   public void periodic(){}

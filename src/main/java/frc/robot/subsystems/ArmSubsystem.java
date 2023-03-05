@@ -39,10 +39,10 @@ public class ArmSubsystem extends SubsystemBase {
     return upperLimit.get();
   }
 
-  public CommandBase armDefaultMovementCommand(BooleanSupplier lBumper, DoubleSupplier lTrigger){
+  public CommandBase armDefaultMovementCommand(BooleanSupplier lBumper, BooleanSupplier rBumper){
     if(lBumper.getAsBoolean()){
       return run(()->armMotor.set(.35)).withName("armUp");
-    }else if(lTrigger.getAsDouble() > .5){
+    }else if(rBumper.getAsBoolean()){
       return run(()->armMotor.set(-.2)).withName("armDown");
     }else{
       return run(()->armMotor.set(.17)).withName("armHold");
