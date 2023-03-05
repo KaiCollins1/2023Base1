@@ -15,7 +15,6 @@ import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -47,11 +46,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   private double m_fwd = 0;
   private double m_rot = 0;
-  @Override
-  public void setDefaultCommand(Command command) {
-      // TODO Auto-generated method stub
-      super.setDefaultCommand(command);
-  }
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);

@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -47,12 +46,6 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("ArmSpeed", armSpeed);
     SmartDashboard.putBoolean("UpperLimit", upperSwitched());
     SmartDashboard.putBoolean("LowerLimit", lowerSwitched());
-  }
-
-  @Override
-  public void setDefaultCommand(Command command) {
-      // TODO Auto-generated method stub
-      super.setDefaultCommand(command);
   }
   
 }
