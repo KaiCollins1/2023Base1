@@ -4,8 +4,13 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,8 +39,14 @@ public class ArmSubsystem extends SubsystemBase {
     return upperLimit.get();
   }
 
-  public void setArmSpeed(double speed){
-    armMotor.set(speed);
+  public CommandBase armDefaultMovementCommand(BooleanSupplier lBumper, DoubleSupplier lTrigger){
+    if(lBumper.getAsBoolean()){
+      return run(()->armMotor.set(.35)).withName("armUp");
+    }else if(lTrigger.getAsDouble() > .5){
+      return run(()->armMotor.set(-.2)).withName("armDown");
+    }else{
+      return run(()->armMotor.set(.17)).withName("armHold");
+    }
   }
 
   @Override

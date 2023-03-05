@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.ArmMoveCommand;
-import frc.robot.commands.TelopDriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,24 +19,20 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
  */
 public class RobotContainer {
   // The robot's subsystems
-  XboxController controller = new XboxController(0);
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem(controller);
-  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(controller);
+  XboxController m_controller = new XboxController(0);
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_controller);
+  private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_controller);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure default commands
-    CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, new TelopDriveCommand(m_robotDrive));
-    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, new ArmMoveCommand(m_armSubsystem));
+    CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, m_robotDrive.arcadeDriveCommand(
+      ()->m_controller.getLeftY(), 
+      ()->m_controller.getRightX()));
+    CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultMovementCommand(
+      ()->m_controller.getLeftBumper(), 
+      ()->m_controller.getLeftTriggerAxis()));
   }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link PS4Controller}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
