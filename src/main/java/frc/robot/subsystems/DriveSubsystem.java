@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -79,9 +79,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   public CommandBase autonDriveCommand(double speed, double startAngle){
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
-    return run(()->m_drive.arcadeDrive(speed, .2 * controller.calculate(gyro.getAngle(), startAngle))).withName("AutonDriveCommand");
+    return run(()->m_drive.arcadeDrive(speed, .2 * controller.calculate(gyro.getAngle(), startAngle))).withName("autonDrive");
   }
-  
+
   @Override
-  public void periodic(){}
+  public void periodic(){
+    SmartDashboard.putNumber("angle", gyro.getAngle());
+    SmartDashboard.putNumber("rate", gyro.getRate());
+  }
 }
