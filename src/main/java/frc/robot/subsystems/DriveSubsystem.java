@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.SPI;
@@ -16,6 +17,7 @@ import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -68,17 +70,18 @@ public class DriveSubsystem extends SubsystemBase {
     return pitchFilter.calculate(gyro.getPitch())*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
-  public void arcadeDrive(double fwd, double rot) {
-    //m_drive.arcadeDrive(fwdLimiter.calculate(fwd*DriveConstants.kMaxDriveSpeed), rotLimiter.calculate(rot*DriveConstants.kMaxDriveSpeed));
-    m_drive.arcadeDrive(fwd*DriveConstants.kMaxDriveSpeed, rot*DriveConstants.kMaxDriveSpeed);
-  }
-
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
     return run(
       () -> m_drive.arcadeDrive(
         -DriveConstants.kMaxDriveSpeed*fwd.getAsDouble(),
         -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
+
+  public CommandBase autonDriveCommand(double speed, double startAngle){
+    PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
+    return run(()->m_drive.arcadeDrive(speed, .2 * controller.calculate(gyro.getAngle(), startAngle))).withName("AutonDriveCommand");
+  }
+  
   @Override
   public void periodic(){}
 }
