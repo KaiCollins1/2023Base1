@@ -77,7 +77,8 @@ public class DriveSubsystem extends SubsystemBase {
         -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
-  public CommandBase autonDriveCommand(double speed, double startAngle){
+  public CommandBase autonDriveCommand(double speed, double goalAngle, double timeout){
+    double currentLocation = gyro.getAngle();
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
     return run(()->m_drive.arcadeDrive(speed, .2 * controller.calculate(gyro.getAngle(), startAngle))).withName("autonDrive");
   }
