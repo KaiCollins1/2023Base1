@@ -8,7 +8,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
@@ -22,10 +21,6 @@ public class RobotContainer {
   CommandXboxController m_controller = new CommandXboxController(0);
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  
-  public calibrate(){
-    m_robotDrive.zeroHeading();
-  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,8 +30,12 @@ public class RobotContainer {
       ()->m_controller.getRightX()));
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultHoldCommand());
 
-    m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
+    m_controller.leftBumper().onTrue(m_armSubsystem.armDownCommand());
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
+  }
+
+  public void calibrate(){
+    m_robotDrive.zeroHeading();
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -45,6 +44,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // no auto
-    return m_robotDrive.autonDriveCommand(.2, 0, 1);
+    return m_robotDrive.autonDriveCommand(.2, 0.0, 1.0);
   }
 }

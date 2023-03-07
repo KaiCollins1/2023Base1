@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,20 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
   DigitalInput lowerLimit = new DigitalInput(ArmConstants.klowerLimitSwitchPort);
-  DigitalInput upperLimit = new DigitalInput(ArmConstants.kupperLimitSwitchPort);
   Spark armMotor = new Spark(ArmConstants.kArmMotorPort);
 
-  SlewRateLimiter armLimiter = new SlewRateLimiter(.7);
-
   public ArmSubsystem() {}
-
-  public boolean lowerSwitched(){
-    return lowerLimit.get();
-  }
-
-  public boolean upperSwitched(){
-    return upperLimit.get();
-  }
 
   public CommandBase armDefaultHoldCommand(){
     // if(lBumper.getAsBoolean()){
@@ -47,14 +35,13 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase armDownCommand(){
-    return run(()->armMotor.set(-.2)).withName("armDown");
+    return run(()->armMotor.set(-.2)).until(()->lowerLimit.get()).withName("armDown");
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("UpperLimit", upperSwitched());
-    SmartDashboard.putBoolean("LowerLimit", lowerSwitched());
+    SmartDashboard.putBoolean("LowerLimit", lowerLimit.get());
   }
   
 }
