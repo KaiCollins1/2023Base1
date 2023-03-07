@@ -71,6 +71,10 @@ public class DriveSubsystem extends SubsystemBase {
     return pitchFilter.calculate(gyro.getPitch()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
+  public boolean climbingChargeStation() {
+    return Math.abs(getPitch()) > 8;
+  }
+
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
     return run(
       () -> m_drive.arcadeDrive(
@@ -87,6 +91,14 @@ public class DriveSubsystem extends SubsystemBase {
         -0.2 * controller.calculate(getAngle(), goalAngleAbsolute)
       )
     ).withTimeout(timeout).withName("autonDrive");
+  }
+
+  public CommandBase findChargeStation() {
+    return autonDriveCommand(
+      .4,
+      0, 
+      10
+    ).until(()->climbingChargeStation()).withName("findChargeStation");
   }
 
   @Override
