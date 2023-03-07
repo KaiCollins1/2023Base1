@@ -23,7 +23,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   
-  public repeatCalibration(){
+  public calibrate(){
     m_robotDrive.zeroHeading();
   }
 
