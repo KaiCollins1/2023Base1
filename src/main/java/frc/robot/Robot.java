@@ -27,9 +27,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    // Instantiate our RobotContainer.  This will perform all our button bindings
     m_robotContainer = new RobotContainer();
+    //reset stuff like gyro
+    m_robotContainer.calibrate();
+    
     CameraServer.startAutomaticCapture();
   }
 
@@ -59,6 +61,9 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    //resets stuff like the gyro
+    m_robotContainer.calibrate();
+    
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     /*
@@ -88,6 +93,9 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
   }
+  
+  //resets stuff like the gyro
+    m_robotContainer.calibrate();
 
   /** This function is called periodically during operator control. */
   @Override
