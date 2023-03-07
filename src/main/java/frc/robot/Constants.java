@@ -14,18 +14,21 @@ package frc.robot;
  */
 public final class Constants {
   public static final class DriveConstants {
+    //differential drive
     public static final int rightBackPort = 2;
     public static final int rightFrontPort = 5;
     public static final int leftBackPort = 3;
     public static final int leftFrontPort = 4;
-
+    public static final double kMaxDriveSpeed = .8;
+    
+    //gyro
+    public static final double kPitchOffset = 0;
+    public static final double kAngleOffset = 0;
     public static final boolean kGyroReversed = false;
     public static final int kMedianFilterRange = 5;
-
-    public static final double kTurnToleranceDeg = 5;
-    public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
-    public static final double kMaxDriveSpeed = .8;
     public static final double kP = .3;
+    //public static final double kTurnToleranceDeg = 5;
+    //public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
   }
 
   public static final class ArmConstants{

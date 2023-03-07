@@ -22,6 +22,10 @@ public class RobotContainer {
   CommandXboxController m_controller = new CommandXboxController(0);
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  
+  public calibrate(){
+    m_robotDrive.zeroHeading();
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -41,6 +45,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // no auto
-    return m_robotDrive.autonDriveCommand(.2, 0).withTimeout(1);
+    return m_robotDrive.autonDriveCommand(.2, 0, 1);
   }
 }

@@ -56,6 +56,7 @@ public class DriveSubsystem extends SubsystemBase {
     // gearbox is constructed, you might have to invert the left side instead.
     rightMotors.setInverted(true);
     zeroHeading();
+    gyro.setAngleAdjustment(DriveConstants.kAngleOffset);
   }
 
   public void zeroHeading(){
@@ -67,7 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getPitch(){
-    return pitchFilter.calculate(gyro.getPitch())*(DriveConstants.kGyroReversed ? -1 : 1);
+    return pitchFilter.calculate(gyro.getPitch()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
@@ -77,14 +78,21 @@ public class DriveSubsystem extends SubsystemBase {
         -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
-  public CommandBase autonDriveCommand(double speed, double startAngle){
+  public CommandBase autonDriveCommand(double speed, double goalAngleRelative, double timeout){
+    double goalAngleAbsolute = getAngle() + goalAngleRelative;
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
-    return run(()->m_drive.arcadeDrive(speed, .2 * controller.calculate(gyro.getAngle(), startAngle))).withName("autonDrive");
+    return run(
+      ()->m_drive.arcadeDrive(
+        speed,
+        -0.2 * controller.calculate(getAngle(), goalAngleAbsolute)
+      )
+    ).withTimeout(timeout).withName("autonDrive");
   }
 
   @Override
   public void periodic(){
-    SmartDashboard.putNumber("angle", gyro.getAngle());
+    SmartDashboard.putNumber("angle", getAngle());
     SmartDashboard.putNumber("rate", gyro.getRate());
+    SmartDashboard.putNumber("pitch", getPitch());
   }
 }
