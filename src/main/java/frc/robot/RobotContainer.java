@@ -30,7 +30,7 @@ public class RobotContainer {
       ()->m_controller.getRightX()));
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultHoldCommand());
 
-    m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
+    m_controller.leftBumper().onTrue(m_armSubsystem.armDownCommand());
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
   }
 
