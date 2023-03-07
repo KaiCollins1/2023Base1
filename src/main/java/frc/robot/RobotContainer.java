@@ -41,6 +41,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // no auto
-    return m_robotDrive.autonDriveCommand(.2, 0).withTimeout(1);
+    return m_robotDrive.autonDriveCommand(.2, 0, 1);
   }
 }
