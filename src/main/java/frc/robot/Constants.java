@@ -32,8 +32,7 @@ public final class Constants {
   }
 
   public static final class ArmConstants{
-    public static final int klowerLimitSwitchPort = 0;
-    public static final int kupperLimitSwitchPort = 1;
+    public static final int klowerLimitSwitchPort = 1;
     public static final int kArmMotorPort = 0;
     public static final int kArmInverted = 1;
   }

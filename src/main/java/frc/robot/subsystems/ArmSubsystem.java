@@ -17,7 +17,9 @@ public class ArmSubsystem extends SubsystemBase {
   DigitalInput lowerLimit = new DigitalInput(ArmConstants.klowerLimitSwitchPort);
   Spark armMotor = new Spark(ArmConstants.kArmMotorPort);
 
-  public ArmSubsystem() {}
+  public ArmSubsystem() {
+    
+  }
 
   public CommandBase armDefaultHoldCommand(){
     // if(lBumper.getAsBoolean()){

@@ -92,10 +92,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    //resets stuff like the gyro
+    m_robotContainer.calibrate();
   }
   
-  //resets stuff like the gyro
-    m_robotContainer.calibrate();
 
   /** This function is called periodically during operator control. */
   @Override
