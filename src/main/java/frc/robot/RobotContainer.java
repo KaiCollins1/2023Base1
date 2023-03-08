@@ -37,7 +37,7 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
-    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 0, 10));
+    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 10));
     m_chooser.addOption("Dock Charge Station Test", m_robotDrive.dockChStationCommnad(10));
     m_chooser.addOption("Enable Charge Station Test", m_robotDrive.enableChStationCommand(10));
     m_chooser.addOption("Dock Enable Charge Station Test", m_robotDrive.autonEnableCommand());
@@ -56,6 +56,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //ref sendableChooser here
     // return m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand());
-    return m_chooser.getSelected();
+    //return m_chooser.getSelected();
+    return m_robotDrive.autonEnableCommand();
   }
 }

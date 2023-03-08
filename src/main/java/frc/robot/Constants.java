@@ -26,10 +26,11 @@ public final class Constants {
     public static final double kAngleOffset = 0;
     public static final boolean kGyroReversed = false;
     public static final int kMedianFilterRange = 5;
-    public static final double kP = .3;
+    public static final double kP = .1;
     public static final double kPitchTolerance = 1;
     //public static final double kTurnToleranceDeg = 5;
     //public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
+    public static final double kEnabledP = .05;
   }
 
   public static final class ArmConstants{

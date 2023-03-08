@@ -72,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public boolean climbingChargeStation() {
-    return Math.abs(getPitch()) > 8;
+    return Math.abs(getPitch()) > 10;
   }
 
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
@@ -82,31 +82,29 @@ public class DriveSubsystem extends SubsystemBase {
         -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
-  public CommandBase autonDriveCommand(double speed, double goalAngleRelative, double timeout){
-    double goalAngleAbsolute = getAngle() + goalAngleRelative;
+  public CommandBase autonDriveCommand(double speed, double timeout){
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
     return run(
       ()->m_drive.arcadeDrive(
         speed,
-        -0.2 * controller.calculate(getAngle(), goalAngleAbsolute)
+        -0.2 * controller.calculate(getAngle(), 0)
       )
     ).withTimeout(timeout).withName("autonDrive");
   }
 
   public CommandBase dockChStationCommnad(double timeout) {
     return autonDriveCommand(
-      .4,
-      0, 
+      .75,
       10
     ).until(()->climbingChargeStation()).withTimeout(timeout).withName("dockChStation");
   }
   
   public CommandBase enableChStationCommand(double timeout) {
-    PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
-    controller.setTolerance(DriveConstants.kPitchTolerance);;
+    PIDController controller = new PIDController(DriveConstants.kEnabledP, 0, 0);
+    controller.setTolerance(DriveConstants.kPitchTolerance);
     return run(
       ()->m_drive.arcadeDrive(
-        controller.calculate(getPitch(), 0),
+        -controller.calculate(getPitch(), 0),
         0
       )
     ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
