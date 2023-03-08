@@ -93,14 +93,29 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  public CommandBase findChargeStation() {
+  public CommandBase dockChStationCommnad(double timout) {
     return autonDriveCommand(
       .4,
       0, 
       10
-    ).until(()->climbingChargeStation()).withName("findChargeStation");
+    ).until(()->climbingChargeStation()).withTimeout(timeout).withName("dockChStation");
   }
-
+  
+  public CommandBase enableChStationCommand(double timeout) {
+    PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
+    controller.setPositionTolerance(DriveConstants.kPitchTolerance);
+    return run(
+      ()->m_drive.arcadeDrive(
+        controller.calculate(getPitch(), 0),
+        0
+      )
+    ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
+  }
+  
+  public CommandBase autonEnableCommand() {
+    return dockCHStationCommand(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
+  }
+  
   @Override
   public void periodic(){
     SmartDashboard.putNumber("angle", getAngle());
