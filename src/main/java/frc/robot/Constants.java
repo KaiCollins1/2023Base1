@@ -27,6 +27,7 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
     public static final int kMedianFilterRange = 5;
     public static final double kP = .3;
+    public static final double kPitchTolerance = 1;
     //public static final double kTurnToleranceDeg = 5;
     //public static final double kTurnRateToleranceDegPerS = 10; // degrees per second
   }

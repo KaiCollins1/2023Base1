@@ -37,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase armDownCommand(){
-    return run(()->armMotor.set(-.2)).until(()->lowerLimit.get()).withName("armDown");
+    return run(()->armMotor.set(-.2)).withName("armDown");
   }
 
   @Override

@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -35,10 +37,10 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
-    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 0, 3));
-    m_chooser.addOption("Dock Charge Station Test", m_robotDrive.dockChStationCommand(10));
-    m_chooser.addOption("Enable Charge Station Test", m_robotDrive.enableChStationCOmmand(10));
-    m_chooser.addOption("Dock Enable Charge Station Test", m_robotDrive.autonEnabledCommand());
+    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 0, 10));
+    m_chooser.addOption("Dock Charge Station Test", m_robotDrive.dockChStationCommnad(10));
+    m_chooser.addOption("Enable Charge Station Test", m_robotDrive.enableChStationCommand(10));
+    m_chooser.addOption("Dock Enable Charge Station Test", m_robotDrive.autonEnableCommand());
     m_chooser.addOption("Score Dock Enable Charge Station Test", m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand()));
     SmartDashboard.putData(m_chooser);
   }

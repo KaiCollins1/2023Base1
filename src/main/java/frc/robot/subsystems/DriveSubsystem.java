@@ -68,7 +68,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getPitch(){
-    return pitchFilter.calculate(gyro.getPitch()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
+    return pitchFilter.calculate(gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   public boolean climbingChargeStation() {
@@ -93,7 +93,7 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  public CommandBase dockChStationCommnad(double timout) {
+  public CommandBase dockChStationCommnad(double timeout) {
     return autonDriveCommand(
       .4,
       0, 
@@ -103,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
   
   public CommandBase enableChStationCommand(double timeout) {
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
-    controller.setPositionTolerance(DriveConstants.kPitchTolerance);
+    controller.setTolerance(DriveConstants.kPitchTolerance);;
     return run(
       ()->m_drive.arcadeDrive(
         controller.calculate(getPitch(), 0),
@@ -113,7 +113,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
   
   public CommandBase autonEnableCommand() {
-    return dockCHStationCommand(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
+    return dockChStationCommnad(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
   }
   
   @Override
