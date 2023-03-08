@@ -32,6 +32,8 @@ public class RobotContainer {
 
     m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
+    
+    //sendableChooser here
   }
 
   public void calibrate(){
@@ -43,7 +45,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // no auto
+    //ref sendableChooser here
+    // return m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand());
     return m_robotDrive.autonDriveCommand(.2, 0.0, 1.0);
   }
 }
