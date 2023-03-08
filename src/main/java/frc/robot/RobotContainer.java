@@ -21,6 +21,7 @@ public class RobotContainer {
   CommandXboxController m_controller = new CommandXboxController(0);
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -34,6 +35,12 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
+    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 0, 3));
+    m_chooser.addOption("Dock Charge Station Test", m_robotDrive.dockChStationCommand(10));
+    m_chooser.addOption("Enable Charge Station Test", m_robotDrive.enableChStationCOmmand(10));
+    m_chooser.addOption("Dock Enable Charge Station Test", m_robotDrive.autonEnabledCommand());
+    m_chooser.addOption("Score Dock Enable Charge Station Test", m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand()));
+    SmartDashboard.putData(m_chooser);
   }
 
   public void calibrate(){
@@ -47,6 +54,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //ref sendableChooser here
     // return m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand());
-    return m_robotDrive.autonDriveCommand(.2, 0.0, 1.0);
+    return m_chooser.getSelected();
   }
 }
