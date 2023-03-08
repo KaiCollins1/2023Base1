@@ -100,11 +100,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
   
   public CommandBase enableChStationCommand(double timeout) {
-    PIDController controller = new PIDController(DriveConstants.kEnabledP, 0, 0);
-    controller.setTolerance(DriveConstants.kPitchTolerance);
+    PIDController controller = new PIDController(.1, 0, 0);
+    controller.setTolerance(DriveConstants.kPitchTolerance, 5);
     return run(
       ()->m_drive.arcadeDrive(
-        -controller.calculate(getPitch(), 0),
+        -.63*controller.calculate(getPitch(), 2.5),
         0
       )
     ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
