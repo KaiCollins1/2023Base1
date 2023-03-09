@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
-  // The motors on the left side of the drive.
 
   public final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
@@ -36,7 +35,6 @@ public class DriveSubsystem extends SubsystemBase {
           new Spark(DriveConstants.leftBackPort),
           new Spark(DriveConstants.leftFrontPort));
 
-  // The motors on the right side of the drive.
   private final MotorControllerGroup rightMotors =
       new MotorControllerGroup(
           new Spark(DriveConstants.rightBackPort),
@@ -85,7 +83,7 @@ public class DriveSubsystem extends SubsystemBase {
   public CommandBase autonDriveCommand(double speed, double timeout){
     PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
     return run(
-      ()->m_drive.arcadeDrive(
+      () -> m_drive.arcadeDrive(
         speed,
         -0.2 * controller.calculate(getAngle(), 0)
       )
@@ -96,14 +94,14 @@ public class DriveSubsystem extends SubsystemBase {
     return autonDriveCommand(
       .75,
       10
-    ).until(()->climbingChargeStation()).withTimeout(timeout).withName("dockChStation");
+    ).until(() -> climbingChargeStation()).withTimeout(timeout).withName("dockChStation");
   }
   
   public CommandBase enableChStationCommand(double timeout) {
     PIDController controller = new PIDController(.1, 0, 0);
     controller.setTolerance(DriveConstants.kPitchTolerance, 5);
     return run(
-      ()->m_drive.arcadeDrive(
+      () -> m_drive.arcadeDrive(
         -.63*controller.calculate(getPitch(), 2.5),
         0
       )

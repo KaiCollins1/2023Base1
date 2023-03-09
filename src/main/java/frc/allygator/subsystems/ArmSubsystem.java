@@ -23,21 +23,21 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase armDefaultHoldCommand(){
     // if(lBumper.getAsBoolean()){
-    //   return run(()->armMotor.set(.35)).withName("armUp");
+    //   return run(() -> armMotor.set(.35)).withName("armUp");
     // }else if(rBumper.getAsBoolean()){
-    //   return run(()->armMotor.set(-.2)).withName("armDown");
+    //   return run(() -> armMotor.set(-.2)).withName("armDown");
     // }else{
-    //   return run(()->armMotor.set(.17)).withName("armHold");
+    //   return run(() -> armMotor.set(.17)).withName("armHold");
     // }
-    return run(()->armMotor.set(.17)).withName("armHold");
+    return run(() -> armMotor.set(.17)).withName("armHold");
   }
 
   public CommandBase armUpCommand(){
-    return run(()->armMotor.set(.35)).withName("armUp");
+    return run(() -> armMotor.set(.35)).withName("armUp");
   }
 
   public CommandBase armDownCommand(){
-    return run(()->armMotor.set(-.2)).withName("armDown");
+    return run(() -> armMotor.set(-.2)).withName("armDown");
   }
 
   @Override
