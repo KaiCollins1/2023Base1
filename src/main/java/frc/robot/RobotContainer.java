@@ -23,7 +23,7 @@ public class RobotContainer {
   CommandXboxController m_controller = new CommandXboxController(0);
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  SendableChooser<CommandBase> m_chooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -37,17 +37,20 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
-    m_chooser.setDefaultOption("Drive Forward Test", m_robotDrive.autonDriveCommand(.4, 10));
-    m_chooser.addOption("Dock Charge Station Test", m_robotDrive.dockChStationCommnad(10));
-    m_chooser.addOption("Enable Charge Station Test", m_robotDrive.enableChStationCommand(10));
-    m_chooser.addOption("Dock Enable Charge Station Test", m_robotDrive.autonEnableCommand());
-    m_chooser.addOption("Score Dock Enable Charge Station Test", m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand()));
+    m_chooser.setDefaultOption("Enable", m_robotDrive.autonEnableCommand);
+    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand(),withTimeout(1).andThen(m_robotDrive.autonDriveCommand(-.5, 3));
     SmartDashboard.putData(m_chooser);
   }
 
   public void calibrate(){
     m_robotDrive.zeroHeading();
   }
+  
+  public void updateSchedulerTelemetry() {
+    SmartDashboard.putData(m_robotDrive);
+    SmartDashboard.putData(m_armSubsystem);
+  }
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -56,7 +59,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     //ref sendableChooser here
     // return m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand());
-    //return m_chooser.getSelected();
-    return m_robotDrive.autonEnableCommand();
+    return m_chooser.getSelected();
+    //return m_robotDrive.autonEnableCommand();
   }
 }
