@@ -50,6 +50,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    m_robotContainer.updateSchedulerTelemetry();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -65,16 +66,8 @@ public class Robot extends TimedRobot {
     //resets stuff like the gyro
     m_robotContainer.calibrate();
     
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
     // schedule the autonomous command (example)
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand().schedule();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -86,10 +79,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
+    // This makes sure that the autonomous stops running when teleop starts running.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
