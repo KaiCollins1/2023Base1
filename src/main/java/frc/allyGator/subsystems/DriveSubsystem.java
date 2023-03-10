@@ -81,11 +81,11 @@ public class DriveSubsystem extends SubsystemBase {
     return Math.abs(getPitch()) > 10;
   }
 
-  public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot){
+  public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
     return run(
       () -> m_drive.arcadeDrive(
-        -DriveConstants.kMaxDriveSpeed*fwd.getAsDouble(),
-        -DriveConstants.kMaxDriveSpeed*rot.getAsDouble())).withName("arcadeDrive");
+        -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
+        -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
   public CommandBase autonDriveCommand(double speed, double timeout){
