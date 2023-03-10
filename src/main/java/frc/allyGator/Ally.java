@@ -6,6 +6,7 @@ package frc.allyGator;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -20,6 +21,11 @@ public class Ally extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private double p = .1;
+  private double i = 0;
+  private double d = 0;
+  private double pTol = 2;
+  private double vTol = 5;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,6 +39,12 @@ public class Ally extends TimedRobot {
     m_robotContainer.calibrate();
     
     CameraServer.startAutomaticCapture();
+    SmartDashboard.putNumber("p", p);
+    SmartDashboard.putNumber("i", i);
+    SmartDashboard.putNumber("d", d);
+    SmartDashboard.putNumber("pTol", pTol);
+    SmartDashboard.putNumber("vTol", vTol);
+
   }
 
   /**
@@ -64,6 +76,14 @@ public class Ally extends TimedRobot {
   public void autonomousInit() {
     //resets stuff like the gyro
     m_robotContainer.calibrate();
+
+    m_robotContainer.feedNumbers(
+      SmartDashboard.getNumber("p", p), 
+      SmartDashboard.getNumber("i", i),
+      SmartDashboard.getNumber("d", d),
+      SmartDashboard.getNumber("pTol", pTol),
+      SmartDashboard.getNumber("vTol", vTol)
+    );
     
     // schedule the autonomous command (example)
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();

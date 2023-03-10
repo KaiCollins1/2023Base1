@@ -44,6 +44,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   SlewRateLimiter fwdLimiter = new SlewRateLimiter(1.2);
   SlewRateLimiter rotLimiter = new SlewRateLimiter(1.2);
+
+  private double m_p = .1;
+  private double m_i = 0;
+  private double m_d = 0;
+  private double m_pTol;
+  private double m_vTol;
   
 
   // The robot's drive
@@ -102,7 +108,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
   
   public CommandBase enableChStationCommand(double timeout) {
-    PIDController controller = new PIDController(.1, 0, 0);
+    PIDController controller = new PIDController(m_p, m_i, m_d);
     controller.setTolerance(DriveConstants.kPitchTolerance, 5);
     return run(
       ()->m_drive.arcadeDrive(
@@ -122,4 +128,12 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("rate", gyro.getRate());
     SmartDashboard.putNumber("pitch", getPitch());
   }
+
+public void feedNumbers(double p, double i, double d, double pTol, double vTol) {
+  m_p = p;
+  m_i = i;
+  m_d = d;
+  m_pTol = pTol;
+  m_vTol = vTol;
+}
 }

@@ -25,6 +25,7 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   SendableChooser<CommandBase> m_chooser = new SendableChooser<>();
+  
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -39,7 +40,7 @@ public class RobotContainer {
     
     //sendableChooser here
     m_chooser.setDefaultOption("Enable", m_robotDrive.autonEnableCommand());
-    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonDriveCommand(-.5, 4)));
+    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand().alongWith(m_robotDrive.autonDriveCommand(0,1)).withTimeout(1).andThen(m_robotDrive.autonDriveCommand(-.5, 4)));
     SmartDashboard.putData(m_chooser);
   }
 
@@ -50,6 +51,10 @@ public class RobotContainer {
   public void updateSchedulerTelemetry() {
     SmartDashboard.putData(m_robotDrive);
     SmartDashboard.putData(m_armSubsystem);
+  }
+
+  public void feedNumbers(double p, double i, double d, double pTol, double vTol){
+    m_robotDrive.feedNumbers(p, i, d, pTol, vTol);
   }
   
   /**
