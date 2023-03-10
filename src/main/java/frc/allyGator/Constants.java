@@ -19,7 +19,7 @@ public final class Constants {
     public static final int rightFrontPort = 5;
     public static final int leftBackPort = 3;
     public static final int leftFrontPort = 4;
-    public static final double kMaxDriveSpeed = .8;
+    public static final double kMaxDriveSpeed = 1;
     
     //gyro
     public static final double kPitchOffset = 0;

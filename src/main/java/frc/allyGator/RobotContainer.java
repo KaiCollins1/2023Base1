@@ -40,7 +40,7 @@ public class RobotContainer {
     
     //sendableChooser here
     m_chooser.setDefaultOption("Enable", m_robotDrive.autonEnableCommand());
-    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand().alongWith(m_robotDrive.autonDriveCommand(0,1)).withTimeout(1).andThen(m_robotDrive.autonDriveCommand(-.5, 4)));
+    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand().alongWith(m_robotDrive.autonDriveCommand(0,3)).withTimeout(3).andThen(m_robotDrive.autonDriveCommand(-.75, 3)));
     SmartDashboard.putData(m_chooser);
   }
 

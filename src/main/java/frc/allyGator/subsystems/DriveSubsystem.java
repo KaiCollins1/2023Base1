@@ -103,16 +103,16 @@ public class DriveSubsystem extends SubsystemBase {
       .75,
       10
     ).until(()->climbingChargeStation()).withTimeout(timeout)
-    .andThen(autonDriveCommand(.8,1))
+    .andThen(autonDriveCommand(.7,1))
     .withName("dockChStation");
   }
   
   public CommandBase enableChStationCommand(double timeout) {
-    PIDController controller = new PIDController(m_p, m_i, m_d);
-    controller.setTolerance(DriveConstants.kPitchTolerance, 5);
+    PIDController controller = new PIDController(.000005, m_i, .01);
+    controller.setTolerance(1, 3);
     return run(
       ()->m_drive.arcadeDrive(
-        -.63*controller.calculate(getPitch(), 2.5),
+        -.63*controller.calculate(getPitch(), 1),
         0
       )
     ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
