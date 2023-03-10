@@ -31,16 +31,25 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure default commands
     CommandScheduler.getInstance().setDefaultCommand(m_robotDrive, m_robotDrive.arcadeDriveCommand(
-      ()->m_controller.getLeftY(), 
-      ()->m_controller.getRightX()));
+      () -> m_controller.getLeftY(), 
+      () -> m_controller.getRightX(),
+      () -> m_controller.getRightTriggerAxis()
+      ));
     CommandScheduler.getInstance().setDefaultCommand(m_armSubsystem, m_armSubsystem.armDefaultHoldCommand());
 
     m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
-    m_chooser.setDefaultOption("Enable", m_robotDrive.autonEnableCommand());
-    m_chooser.addOption("Score Exit", m_armSubsystem.armDownCommand().alongWith(m_robotDrive.autonDriveCommand(0,3)).withTimeout(3).andThen(m_robotDrive.autonDriveCommand(-.75, 3)));
+    m_chooser.setDefaultOption(
+      "Score Exit", 
+      m_armSubsystem.armDownCommand().
+      alongWith(m_robotDrive.autonDriveCommand(0,3)).
+      withTimeout(3).
+      andThen(m_robotDrive.autonDriveCommand(-.75, 3))
+    );
+    m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());
+    m_chooser.addOption("Do Nothing", m_robotDrive.autonDriveCommand(0, 15));
     SmartDashboard.putData(m_chooser);
   }
 
@@ -53,6 +62,7 @@ public class RobotContainer {
     SmartDashboard.putData(m_armSubsystem);
   }
 
+  //TODO fix the quick pid tuning, using SmartDashboard.getNumber() does not work.
   public void feedNumbers(double p, double i, double d, double pTol, double vTol){
     m_robotDrive.feedNumbers(p, i, d, pTol, vTol);
   }
