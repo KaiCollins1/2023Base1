@@ -96,7 +96,9 @@ public class DriveSubsystem extends SubsystemBase {
     return autonDriveCommand(
       .75,
       10
-    ).until(()->climbingChargeStation()).withTimeout(timeout).withName("dockChStation");
+    ).until(()->climbingChargeStation()).withTimeout(timeout)
+    .andThen(autonDriveCommand(.8,1))
+    .withName("dockChStation");
   }
   
   public CommandBase enableChStationCommand(double timeout) {
