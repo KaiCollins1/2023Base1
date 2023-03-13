@@ -42,14 +42,29 @@ public class RobotContainer {
     
     //sendableChooser here
     m_chooser.setDefaultOption(
-      "Score Exit", 
+      "Score Mobility", 
       m_armSubsystem.armDownCommand().
       alongWith(m_robotDrive.autonDriveCommand(0,3)).
       withTimeout(3).
-      andThen(m_robotDrive.autonDriveCommand(-.75, 3))
+      andThen(m_robotDrive.autonDriveCommand(-.75, 2.8))
     );
-    m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());
-    m_chooser.addOption("Do Nothing", m_robotDrive.autonDriveCommand(0, 15));
+    //TODO make enable work
+    //m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());
+    m_chooser.addOption(
+      "Score", 
+      m_robotDrive.autonDriveCommand(0, 15).
+      alongWith(m_armSubsystem.armDownCommand().
+      withTimeout(1))
+      );
+    m_chooser.addOption("Middle Mobility", m_robotDrive.middleMobilityCommand());
+    m_chooser.addOption(
+      "Score Middle Mobility",
+      m_robotDrive.autonDriveCommand(0, 3).
+      alongWith(m_armSubsystem.armDownCommand()
+      .withTimeout(3)).
+      andThen(m_robotDrive.middleMobilityCommand()).
+      andThen(m_robotDrive.autonDriveCommand(-.75, 1))
+      );
     SmartDashboard.putData(m_chooser);
   }
 

@@ -106,6 +106,21 @@ public class DriveSubsystem extends SubsystemBase {
     .andThen(autonDriveCommand(.7,1))
     .withName("dockChStation");
   }
+
+  public CommandBase revDockChStationCommnad(double timeout) {
+    return autonDriveCommand(
+      -.75,
+      10
+    ).until(()->climbingChargeStation()).withTimeout(timeout)
+    .andThen(autonDriveCommand(-1,1))
+    .withName("dockChStation");
+  }
+
+  public CommandBase middleMobilityCommand(){
+    return revDockChStationCommnad(10).
+    andThen(autonDriveCommand(.7, 5).
+    until(() -> climbingChargeStation()));
+  }
   
   public CommandBase enableChStationCommand(double timeout) {
     PIDController controller = new PIDController(.000005, m_i, .01);
