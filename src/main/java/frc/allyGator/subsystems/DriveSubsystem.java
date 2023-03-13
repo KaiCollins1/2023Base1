@@ -88,8 +88,8 @@ public class DriveSubsystem extends SubsystemBase {
         -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
-  public CommandBase autonDriveCommand(double speed, double timeout){
-    PIDController controller = new PIDController(DriveConstants.kP, 0, 0);
+  public CommandBase autonDriveCommand(double speed, double angle, double timeout){
+    PIDController controller = new PIDController(0.15, 0, 0.1);
     return run(
       ()->m_drive.arcadeDrive(
         speed,
@@ -99,26 +99,20 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public CommandBase dockChStationCommnad(double timeout) {
-    return autonDriveCommand(
-      .75,
-      10
-    ).until(()->climbingChargeStation()).withTimeout(timeout)
-    .andThen(autonDriveCommand(.7,1))
+    return autonDriveCommand(.75, 0.0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
+    .andThen(autonDriveCommand(.7,0,1))
     .withName("dockChStation");
   }
 
   public CommandBase revDockChStationCommnad(double timeout) {
-    return autonDriveCommand(
-      -.75,
-      10
-    ).until(()->climbingChargeStation()).withTimeout(timeout)
-    .andThen(autonDriveCommand(-1,1))
+    return autonDriveCommand(-0.75, 0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
+    .andThen(autonDriveCommand(-1, 0, 1))
     .withName("dockChStation");
   }
 
   public CommandBase middleMobilityCommand(){
     return revDockChStationCommnad(10).
-    andThen(autonDriveCommand(.7, 5).
+    andThen(autonDriveCommand(.7, 0, 5).
     until(() -> climbingChargeStation()));
   }
   
