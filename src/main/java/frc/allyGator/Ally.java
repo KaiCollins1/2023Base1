@@ -5,6 +5,7 @@
 package frc.allyGator;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +27,7 @@ public class Ally extends TimedRobot {
   private double d = 0;
   private double pTol = 2;
   private double vTol = 5;
+  private PowerDistribution pde = new PowerDistribution();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -62,6 +64,15 @@ public class Ally extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.updateSchedulerTelemetry();
+
+    SmartDashboard.putNumberArray("RfRbLfLb", new double[] {
+      pde.getCurrent(1),
+      pde.getCurrent(2),
+      pde.getCurrent(4),
+      pde.getCurrent(3)
+    });
+    SmartDashboard.putNumber("Arm", pde.getCurrent(12));
+    //1243 12
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

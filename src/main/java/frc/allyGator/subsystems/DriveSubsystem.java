@@ -30,6 +30,7 @@ public class DriveSubsystem extends SubsystemBase {
   public final MedianFilter pitchFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
   public final MedianFilter yawFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
   public final MedianFilter rollFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  
 
   private final MotorControllerGroup leftMotors =
       new MotorControllerGroup(
@@ -89,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    PIDController controller = new PIDController(0.15, 0, 0.1);
+    PIDController controller = new PIDController(0.35, 0, 0.04);
     return run(
       ()->m_drive.arcadeDrive(
         speed,
@@ -116,20 +117,20 @@ public class DriveSubsystem extends SubsystemBase {
     until(() -> climbingChargeStation()));
   }
   
-  public CommandBase enableChStationCommand(double timeout) {
-    PIDController controller = new PIDController(.000005, m_i, .01);
-    controller.setTolerance(1, 3);
-    return run(
-      ()->m_drive.arcadeDrive(
-        -.63*controller.calculate(getPitch(), 1),
-        0
-      )
-    ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
-  }
+  // public CommandBase enableChStationCommand(double timeout) {
+  //   PIDController controller = new PIDController(.000005, m_i, .01);
+  //   controller.setTolerance(1, 3);
+  //   return run(
+  //     ()->m_drive.arcadeDrive(
+  //       -.63*controller.calculate(getPitch(), 1),
+  //       0
+  //     )
+  //   ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
+  // }
   
-  public CommandBase autonEnableCommand() {
-    return dockChStationCommnad(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
-  }
+  // public CommandBase autonEnableCommand() {
+  //   return dockChStationCommnad(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
+  // }
   
   @Override
   public void periodic(){
