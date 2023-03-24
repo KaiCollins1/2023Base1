@@ -78,11 +78,6 @@ public class RobotContainer {
     SmartDashboard.putData(m_robotDrive);
     SmartDashboard.putData(m_armSubsystem);
   }
-
-  //TODO fix the quick pid tuning, using SmartDashboard.getNumber() does not work.
-  public void feedNumbers(double p, double i, double d, double pTol, double vTol){
-    m_robotDrive.feedNumbers(p, i, d, pTol, vTol);
-  }
   
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
