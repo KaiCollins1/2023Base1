@@ -67,14 +67,6 @@ public class RobotContainer {
       alongWith(m_armSubsystem.armDownCommand().
       withTimeout(1))
       );
-    m_chooser.addOption(
-      "Score, Middle Mobility",
-      m_robotDrive.autonDriveCommand(0, 0, 3).
-      alongWith(m_armSubsystem.armDownCommand()
-      .withTimeout(3)).
-      andThen(m_robotDrive.middleMobilityCommand()).
-      andThen(m_robotDrive.autonDriveCommand(-.75, 0, 1))
-      );
     SmartDashboard.putData(m_chooser);
   }
 

@@ -6,6 +6,8 @@ package frc.allyGator.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import org.opencv.ml.Ml;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -89,6 +91,16 @@ public class DriveSubsystem extends SubsystemBase {
         -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
   }
 
+  // public class dumbPIDController extends DriveSubsystem {
+  //   PIDController controller = new PIDController(0, 0, 0);
+  //   private double maxOutput;
+  //   dumbPIDController(double p, double i, double d, double maxOutput){
+  //     controller.setPID(p,i,d);
+  //   }
+  //   dumbPIDController(double p, double i, double d, double vTol, double pTol, double maxOutput){
+  //   }
+  // }
+
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
     PIDController controller = new PIDController(0.35, 0, 0.04);
     return run(
@@ -99,22 +111,10 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  public CommandBase dockChStationCommnad(double timeout) {
-    return autonDriveCommand(.75, 0.0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
-    .andThen(autonDriveCommand(.7,0,1))
-    .withName("dockChStation");
-  }
-
   public CommandBase revDockChStationCommnad(double timeout) {
     return autonDriveCommand(-0.75, 0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
     .andThen(autonDriveCommand(-1, 0, 1))
     .withName("dockChStation");
-  }
-
-  public CommandBase middleMobilityCommand(){
-    return revDockChStationCommnad(10).
-    andThen(autonDriveCommand(.7, 0, 5).
-    until(() -> climbingChargeStation()));
   }
   
   // public CommandBase enableChStationCommand(double timeout) {
@@ -126,6 +126,12 @@ public class DriveSubsystem extends SubsystemBase {
   //       0
   //     )
   //   ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
+  // }
+
+  // public CommandBase dockChStationCommnad(double timeout) {
+  //   return autonDriveCommand(.75, 0.0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
+  //   .andThen(autonDriveCommand(.7,0,1))
+  //   .withName("dockChStation");
   // }
   
   // public CommandBase autonEnableCommand() {
