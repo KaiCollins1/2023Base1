@@ -7,7 +7,6 @@ package frc.allyGator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -87,14 +86,6 @@ public class Ally extends TimedRobot {
   public void autonomousInit() {
     //resets stuff like the gyro
     m_robotContainer.calibrate();
-
-    m_robotContainer.feedNumbers(
-      SmartDashboard.getNumber("p", p), 
-      SmartDashboard.getNumber("i", i),
-      SmartDashboard.getNumber("d", d),
-      SmartDashboard.getNumber("pTol", pTol),
-      SmartDashboard.getNumber("vTol", vTol)
-    );
     
     // schedule the autonomous command (example)
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();

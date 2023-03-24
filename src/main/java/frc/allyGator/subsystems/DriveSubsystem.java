@@ -48,13 +48,6 @@ public class DriveSubsystem extends SubsystemBase {
   SlewRateLimiter fwdLimiter = new SlewRateLimiter(1.2);
   SlewRateLimiter rotLimiter = new SlewRateLimiter(1.2);
 
-  private double m_p = .1;
-  private double m_i = 0;
-  private double m_d = 0;
-  private double m_pTol;
-  private double m_vTol;
-  
-
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
 
@@ -144,12 +137,4 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("rate", gyro.getRate());
     SmartDashboard.putNumber("pitch", getPitch());
   }
-
-public void feedNumbers(double p, double i, double d, double pTol, double vTol) {
-  m_p = p;
-  m_i = i;
-  m_d = d;
-  m_pTol = pTol;
-  m_vTol = vTol;
-}
 }
