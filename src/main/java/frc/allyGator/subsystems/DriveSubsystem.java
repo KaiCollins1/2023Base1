@@ -6,14 +6,9 @@ package frc.allyGator.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import org.opencv.ml.Ml;
-
 import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -29,26 +24,19 @@ public class DriveSubsystem extends SubsystemBase {
 
   public final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-  public final MedianFilter rateFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
   public final MedianFilter angleFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
   public final MedianFilter pitchFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
-  public final MedianFilter yawFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
-  public final MedianFilter rollFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
-  
 
-  private final MotorControllerGroup leftMotors =
-      new MotorControllerGroup(
-          new Spark(DriveConstants.leftBackPort),
-          new Spark(DriveConstants.leftFrontPort));
+  private final MotorControllerGroup leftMotors = new MotorControllerGroup(
+    new Spark(DriveConstants.leftBackPort),
+    new Spark(DriveConstants.leftFrontPort)
+  );
 
   // The motors on the right side of the drive.
-  private final MotorControllerGroup rightMotors =
-      new MotorControllerGroup(
-          new Spark(DriveConstants.rightBackPort),
-          new Spark(DriveConstants.rightFrontPort));
-
-  SlewRateLimiter fwdLimiter = new SlewRateLimiter(1.2);
-  SlewRateLimiter rotLimiter = new SlewRateLimiter(1.2);
+  private final MotorControllerGroup rightMotors = new MotorControllerGroup(
+    new Spark(DriveConstants.rightBackPort),
+    new Spark(DriveConstants.rightFrontPort)
+  );
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
@@ -56,10 +44,12 @@ public class DriveSubsystem extends SubsystemBase {
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
+    // result in both sides moving forward
     rightMotors.setInverted(true);
+
     zeroHeading();
+
+    //TODO test if setting the adjustment to the first reading of the gyro leads to more consistancy
     gyro.setAngleAdjustment(DriveConstants.kAngleOffset);
   }
 
@@ -67,29 +57,24 @@ public class DriveSubsystem extends SubsystemBase {
     gyro.reset();
   }
 
+  //gets angle, and also accounts for weird values using the MedianFilter angleFilter
+  //modulus by 360 becasue we don't care if the robot has done 30 clockwise rotations
   public double getAngle(){
     return angleFilter.calculate(gyro.getAngle() % 360)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
+  //because of the orientation of the gyro, the actual pitch from the robots perspective is the roll from the gyro's perspecitve
+  //this is why I call the method getPitch(), because you're getting the pitch of the robot
+  //but I use gyro.getRoll() because the gyro reads it as roll
+  //search up how to determine which is roll, pitch, and yaw on the navX documentation.
   public double getPitch(){
     return pitchFilter.calculate(gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
-  public boolean climbingChargeStation() {
+  //climbing chStation? then this returns true
+  public boolean climbingChStation() {
     return Math.abs(getPitch()) > 10;
   }
-
-  
-
-  // public class dumbPIDController extends DriveSubsystem {
-  //   PIDController controller = new PIDController(0, 0, 0);
-  //   private double maxOutput;
-  //   dumbPIDController(double p, double i, double d, double maxOutput){
-  //     controller.setPID(p,i,d);
-  //   }
-  //   dumbPIDController(double p, double i, double d, double vTol, double pTol, double maxOutput){
-  //   }
-  // }
 
   //Teleop Commands
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
@@ -103,7 +88,10 @@ public class DriveSubsystem extends SubsystemBase {
     return run(
       () -> m_drive.arcadeDrive(
         -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
-        -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
+        -DriveConstants.kMaxTurnSpeed*rot.getAsDouble()
+      )
+    ).withName("arcadeDrive");
+
   }
 
   //Auton Commands
@@ -127,35 +115,20 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  public CommandBase revTiltChStationCommnad(double timeout) {
-    return autonDriveCommand(-0.75, 0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
-    .andThen(autonDriveCommand(-1, 0, 1))
+  //drives untill ya hit the chStation then wait for one second to let the ch
+  public CommandBase tiltChStationCommnad(double timeout, boolean goingForward) {
+    return autonDriveCommand(
+      0.75 * (goingForward ? 1 : -1), 
+      0, 
+      10
+    ).until(()->climbingChStation()).withTimeout(timeout)
+    .andThen(autonDriveCommand(0, 0, 1))
     .withName("dockChStation");
   }
   
-  // public CommandBase enableChStationCommand(double timeout) {
-  //   PIDController controller = new PIDController(.000005, m_i, .01);
-  //   controller.setTolerance(1, 3);
-  //   return run(
-  //     ()->m_drive.arcadeDrive(
-  //       -.63*controller.calculate(getPitch(), 1),
-  //       0
-  //     )
-  //   ).until(controller::atSetpoint).withTimeout(timeout).withName("enableChStation");
-  // }
-
-  // public CommandBase dockChStationCommnad(double timeout) {
-  //   return autonDriveCommand(.75, 0.0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
-  //   .andThen(autonDriveCommand(.7,0,1))
-  //   .withName("dockChStation");
-  // }
-  
-  // public CommandBase autonEnableCommand() {
-  //   return dockChStationCommnad(10).andThen(enableChStationCommand(10)).withName("autonEnableChStationNoScore");
-  // }
-  
   @Override
   public void periodic(){
+    //update telemetry
     SmartDashboard.putNumber("angle", getAngle());
     SmartDashboard.putNumber("rate", gyro.getRate());
     SmartDashboard.putNumber("pitch", getPitch());
