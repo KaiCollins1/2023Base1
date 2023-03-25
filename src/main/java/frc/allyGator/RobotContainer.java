@@ -42,7 +42,10 @@ public class RobotContainer {
     
     //sendableChooser here
     m_chooser.setDefaultOption(
-      "Score, Smooth Mobility, Turn armUp", 
+      "Score, Mobility, Turn+armUp", 
+      //Drop arm and satisfy motor watchdog for 3 sec
+      //drive backwards straight for 2.8 sec at 75% speed
+      //turn 180 and then lift arm up
       m_armSubsystem.armDownCommand().alongWith(
         m_robotDrive.autonDriveCommand(0, 0, 3)
       ).withTimeout(3).andThen(
@@ -54,12 +57,16 @@ public class RobotContainer {
     );
     //TODO make enable work
     //m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());
+
+    //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
       "Score", 
-      m_robotDrive.autonDriveCommand(0, 0, 15).
+      m_robotDrive.autonDriveCommand(0, 0, 3).
       alongWith(m_armSubsystem.armDownCommand().
-      withTimeout(1))
-      );
+      withTimeout(3))
+    );
+    
+    //put m_chooser on the dashboard becasue we need to be able to select auton
     SmartDashboard.putData(m_chooser);
   }
 
@@ -67,6 +74,7 @@ public class RobotContainer {
     m_robotDrive.zeroHeading();
   }
   
+  //this basically doesn't help use but whatever
   public void updateSchedulerTelemetry() {
     SmartDashboard.putData(m_robotDrive);
     SmartDashboard.putData(m_armSubsystem);
@@ -78,9 +86,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //ref sendableChooser here
-    // return m_armSubsystem.armDownCommand().withTimeout(1).andThen(m_robotDrive.autonEnableCommand());
+    // return the selected auton command.
     return m_chooser.getSelected();
-    //return m_robotDrive.autonEnableCommand();
   }
 }
