@@ -42,7 +42,7 @@ public class RobotContainer {
     
     //sendableChooser here
     m_chooser.setDefaultOption(
-      "Score, Smooth Mobility, Turn", 
+      "Score, Smooth Mobility, Turn armUp", 
       m_armSubsystem.armDownCommand().alongWith(
         m_robotDrive.autonDriveCommand(0, 0, 3)
       ).withTimeout(3).andThen(
@@ -51,13 +51,6 @@ public class RobotContainer {
         m_robotDrive.autonDriveCommand(.1, 180, 5).alongWith(
         m_armSubsystem.armUpCommand().withTimeout(5)
       ))
-    );
-    m_chooser.addOption(
-      "Score, Rough Mobility", 
-      m_armSubsystem.armDownCommand().
-      alongWith(m_robotDrive.autonDriveCommand(0, 0,3)).
-      withTimeout(3).
-      andThen(m_robotDrive.autonDriveCommand(-0.75, 0, 2.8))
     );
     //TODO make enable work
     //m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());

@@ -11,8 +11,10 @@ import org.opencv.ml.Ml;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -77,12 +79,7 @@ public class DriveSubsystem extends SubsystemBase {
     return Math.abs(getPitch()) > 10;
   }
 
-  public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
-    return run(
-      () -> m_drive.arcadeDrive(
-        -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
-        -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
-  }
+  
 
   // public class dumbPIDController extends DriveSubsystem {
   //   PIDController controller = new PIDController(0, 0, 0);
@@ -94,8 +91,34 @@ public class DriveSubsystem extends SubsystemBase {
   //   }
   // }
 
+  //Teleop Commands
+  public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
+    //gets a doublesupplier to constantly be able to update values.
+    //Inverts both fwd and rot becasue of x y inversion on sticks
+
+    //Slowdown is applied via a scalar. 
+    //slowDown is 0.0 to 1.0 (the right trigger), and then gets scaled to 25%
+    //this is then subtracted from 1 to get a value of 1.0 for no press, and 0.75 for full press
+    //this allows the driver to make the robot drive slower when required for precision/chStation scaling
+    return run(
+      () -> m_drive.arcadeDrive(
+        -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
+        -DriveConstants.kMaxTurnSpeed*rot.getAsDouble())).withName("arcadeDrive");
+  }
+
+  //Auton Commands
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    PIDController controller = new PIDController(0.35, 0, 0.04);
+    //makes a ProfiledPIDController that has the limits of velocity at .6 and acceleration at 4.8
+    //the acceleration is calculated by .6 * 8, becasue I want the robot to go from stopped to full speed in 1/8 of a second
+    //or from full forward to full backward in 1/4 second
+    ProfiledPIDController controller = new ProfiledPIDController(
+      0.35, 
+      0, 
+      0.04, 
+      new TrapezoidProfile.Constraints(0.6, 4.8)
+    );
+
+    //allows the driving to account for an angle mistake, or to turn to a specific angle
     return run(
       ()->m_drive.arcadeDrive(
         speed,
@@ -104,7 +127,7 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  public CommandBase revDockChStationCommnad(double timeout) {
+  public CommandBase revTiltChStationCommnad(double timeout) {
     return autonDriveCommand(-0.75, 0, 10).until(()->climbingChargeStation()).withTimeout(timeout)
     .andThen(autonDriveCommand(-1, 0, 1))
     .withName("dockChStation");
