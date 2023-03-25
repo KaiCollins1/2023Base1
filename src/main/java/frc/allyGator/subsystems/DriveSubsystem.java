@@ -7,6 +7,7 @@ package frc.allyGator.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -42,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final DifferentialDrive m_drive = new DifferentialDrive(leftMotors, rightMotors);
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  public DriveSubsystem(){
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward
     rightMotors.setInverted(true);
@@ -71,8 +72,8 @@ public class DriveSubsystem extends SubsystemBase {
     return pitchFilter.calculate(gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
-  //climbing chStation? then this returns true
-  public boolean climbingChStation() {
+  //climbing ChSt? then this returns true
+  public boolean climbingChSt(){
     return Math.abs(getPitch()) > 10;
   }
 
@@ -84,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
     //Slowdown is applied via a scalar. 
     //slowDown is 0.0 to 1.0 (the right trigger), and then gets scaled to 25%
     //this is then subtracted from 1 to get a value of 1.0 for no press, and 0.75 for full press
-    //this allows the driver to make the robot drive slower when required for precision/chStation scaling
+    //this allows the driver to make the robot drive slower when required for precision/ChSt scaling
     return run(
       () -> m_drive.arcadeDrive(
         -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
@@ -115,15 +116,52 @@ public class DriveSubsystem extends SubsystemBase {
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  //drives untill ya hit the chStation then wait for one second to let the ch
-  public CommandBase tiltChStationCommnad(double timeout, boolean goingForward) {
+  //drives untill ya hit the ChSt then wait for one second to let the ChSt chill
+  public CommandBase tiltChStCommnad(double timeout, boolean goingForward){
     return autonDriveCommand(
       0.75 * (goingForward ? 1 : -1), 
       0, 
       10
-    ).until(()->climbingChStation()).withTimeout(timeout)
+    ).until(
+      ()->climbingChSt()
+    ).withTimeout(timeout)
     .andThen(autonDriveCommand(0, 0, 1))
-    .withName("dockChStation");
+    .withName("tiltChSt");
+  }
+
+  public CommandBase engageChStCommand(boolean goingForward){
+    //makes a ProfiledPIDController with a limit of velocity at .4 and a limit of acceleration at 4
+    //acceleration limit is .4 * 10, which will allow the robot to go from 0 to .4 in 1/10 second
+    //or .4 to -.4 in 1/5 second
+    ProfiledPIDController controller = new ProfiledPIDController(
+      0.2, 
+      0,
+      0.01,
+      new TrapezoidProfile.Constraints(
+        .4, 
+        4)
+    );
+    //sets the controller to only consider itself finished
+    //when the position is within .5 degrees of the goal
+    //and the velocity is less than .5 degrees/sec
+    controller.setTolerance(.5, .5);
+
+    return tiltChStCommnad(4, goingForward)
+    .andThen(
+      autonDriveCommand(
+        controller.calculate(getAngle(), 0),
+        0, 
+        15)
+    ).until(controller::atGoal).withName("enableChSt");
+  }
+
+  public CommandBase chStMobilityCommand(boolean goingForward){
+    return tiltChStCommnad(4, goingForward)
+    .andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, 10)
+    ).until(
+      () -> getPitch() == 0
+    ).andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, .5)
+    );
   }
   
   @Override

@@ -55,8 +55,26 @@ public class RobotContainer {
         m_armSubsystem.armUpCommand().withTimeout(5)
       ))
     );
-    //TODO make enable work
-    //m_chooser.addOption("Enable", m_robotDrive.autonEnableCommand());
+    
+    m_chooser.addOption("TEST Score, engage", 
+      m_armSubsystem.armDownCommand().alongWith(
+        m_robotDrive.autonDriveCommand(0, 0, 3)
+      ).withTimeout(1.5)
+      .andThen(
+        m_robotDrive.engageChStCommand(false)
+      )
+    );
+
+    m_chooser.addOption("TEST Score, Mobility, Engage",
+      m_armSubsystem.armDownCommand().alongWith(
+        m_robotDrive.autonDriveCommand(0, 0, 3)
+      ).withTimeout(1.5)
+      .andThen(
+        m_robotDrive.chStMobilityCommand(false)
+      ).andThen(
+        m_robotDrive.engageChStCommand(true)
+      )
+    );
 
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
