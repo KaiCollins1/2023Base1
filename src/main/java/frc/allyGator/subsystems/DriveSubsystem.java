@@ -64,10 +64,12 @@ public class DriveSubsystem extends SubsystemBase {
     return angleFilter.calculate(gyro.getAngle() % 360)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
-  //because of the orientation of the gyro, the actual pitch from the robots perspective is the roll from the gyro's perspecitve
-  //this is why I call the method getPitch(), because you're getting the pitch of the robot
-  //but I use gyro.getRoll() because the gyro reads it as roll
-  //search up how to determine which is roll, pitch, and yaw on the navX documentation.
+  /*
+  because of the orientation of the gyro, the actual pitch from the robots perspective is the roll from the gyro's perspecitve
+  this is why I call the method getPitch(), because you're getting the pitch of the robot
+  but I use gyro.getRoll() because the gyro reads it as roll
+  search up how to determine which is roll, pitch, and yaw on the navX documentation.
+  */
   public double getPitch(){
     return pitchFilter.calculate(gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
@@ -79,13 +81,15 @@ public class DriveSubsystem extends SubsystemBase {
 
   //Teleop Commands
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
-    //gets a doublesupplier to constantly be able to update values.
-    //Inverts both fwd and rot becasue of x y inversion on sticks
+    /*
+    gets a doublesupplier to constantly be able to update values.
+    Inverts both fwd and rot becasue of x y inversion on sticks
 
-    //Slowdown is applied via a scalar. 
-    //slowDown is 0.0 to 1.0 (the right trigger), and then gets scaled to 25%
-    //this is then subtracted from 1 to get a value of 1.0 for no press, and 0.75 for full press
-    //this allows the driver to make the robot drive slower when required for precision/ChSt scaling
+    Slowdown is applied via a scalar. 
+    slowDown is 0.0 to 1.0 (the right trigger), and then gets scaled to 25%
+    this is then subtracted from 1 to get a value of 1.0 for no press, and 0.75 for full press
+    this allows the driver to make the robot drive slower when required for precision/ChSt scaling
+    */
     return run(
       () -> m_drive.arcadeDrive(
         -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
@@ -97,9 +101,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   //Auton Commands
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    //makes a ProfiledPIDController that has the limits of velocity at .6 and acceleration at 4.8
-    //the acceleration is calculated by .6 * 8, becasue I want the robot to go from stopped to full speed in 1/8 of a second
-    //or from full forward to full backward in 1/4 second
+    /*
+    makes a ProfiledPIDController that has the limits of velocity at .6 and acceleration at 4.8
+    the acceleration is calculated by .6 * 8, becasue I want the robot to go from stopped to full speed in 1/8 of a second
+    or from full forward to full backward in 1/4 second
+    */
     ProfiledPIDController controller = new ProfiledPIDController(
       0.35, 
       0, 
@@ -130,9 +136,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public CommandBase engageChStCommand(boolean goingForward){
-    //makes a ProfiledPIDController with a limit of velocity at .4 and a limit of acceleration at 4
-    //acceleration limit is .4 * 10, which will allow the robot to go from 0 to .4 in 1/10 second
-    //or .4 to -.4 in 1/5 second
+    /*
+    makes a ProfiledPIDController with a limit of velocity at .4 and a limit of acceleration at 4
+    acceleration limit is .4 * 10, which will allow the robot to go from 0 to .4 in 1/10 second
+    or .4 to -.4 in 1/5 second
+    */
     ProfiledPIDController controller = new ProfiledPIDController(
       0.2, 
       0,
@@ -141,9 +149,11 @@ public class DriveSubsystem extends SubsystemBase {
         .4, 
         4)
     );
-    //sets the controller to only consider itself finished
-    //when the position is within .5 degrees of the goal
-    //and the velocity is less than .5 degrees/sec
+    /*
+    sets the controller to only consider itself finished
+    when the position is within .5 degrees of the goal
+    and the velocity is less than .5 degrees/sec
+    */
     controller.setTolerance(.5, .5);
 
     return tiltChStCommnad(4, goingForward)
