@@ -107,9 +107,9 @@ public class DriveSubsystem extends SubsystemBase {
     or from full forward to full backward in 1/4 second
     */
     ProfiledPIDController controller = new ProfiledPIDController(
-      0.35, 
+      0.06, 
+      0.005, 
       0, 
-      0.04, 
       new TrapezoidProfile.Constraints(0.6, 4.8)
     );
 
@@ -117,7 +117,7 @@ public class DriveSubsystem extends SubsystemBase {
     return run(
       ()->m_drive.arcadeDrive(
         speed,
-        -0.2 * controller.calculate(getAngle(), 0)
+        -controller.calculate(getAngle(), angle)
       )
     ).withTimeout(timeout).withName("autonDrive");
   }

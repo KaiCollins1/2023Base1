@@ -55,6 +55,10 @@ public class RobotContainer {
         m_armSubsystem.armUpCommand().withTimeout(5)
       ))
     );
+
+    m_chooser.addOption("TEST turn 180", 
+    m_robotDrive.autonDriveCommand(0, 180, 30).withTimeout(30)
+    );
     
     m_chooser.addOption("TEST Score, engage", 
       m_armSubsystem.armDownCommand().alongWith(
