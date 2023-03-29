@@ -8,15 +8,16 @@ import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.allyGator.Constants.DriveConstants;
 
@@ -25,8 +26,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-  public final MedianFilter angleFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
-  public final MedianFilter pitchFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
+  public final MedianFilter warningFilter = new MedianFilter(DriveConstants.kMedianFilterRange);
 
   private final MotorControllerGroup leftMotors = new MotorControllerGroup(
     new Spark(DriveConstants.leftBackPort),
@@ -61,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase {
   //gets angle, and also accounts for weird values using the MedianFilter angleFilter
   //modulus by 360 becasue we don't care if the robot has done 30 clockwise rotations
   public double getAngle(){
-    return angleFilter.calculate(gyro.getAngle() % 360)*(DriveConstants.kGyroReversed ? -1 : 1);
+    return (gyro.getAngle() % 360) * (DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   /*
@@ -71,7 +71,7 @@ public class DriveSubsystem extends SubsystemBase {
   search up how to determine which is roll, pitch, and yaw on the navX documentation.
   */
   public double getPitch(){
-    return pitchFilter.calculate(gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
+    return (gyro.getRoll()+DriveConstants.kPitchOffset)*(DriveConstants.kGyroReversed ? -1 : 1);
   }
 
   //climbing ChSt? then this returns true
@@ -101,28 +101,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   //Auton Commands
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    /*
-    makes a ProfiledPIDController that has the limits of velocity at .6 and acceleration at 4.8
-    the acceleration is calculated by .6 * 8, becasue I want the robot to go from stopped to full speed in 1/8 of a second
-    or from full forward to full backward in 1/4 second
-    */
-    ProfiledPIDController controller = new ProfiledPIDController(
-      0.06, 
-      0.005, 
-      0, 
-      new TrapezoidProfile.Constraints(0.6, 4.8)
-    );
+    PIDController controller = new PIDController(0.35, 0.0, 0.04);
 
     //allows the driving to account for an angle mistake, or to turn to a specific angle
     return run(
       ()->m_drive.arcadeDrive(
         speed,
-        -controller.calculate(getAngle(), angle)
+        MathUtil.clamp(-controller.calculate(getAngle(), angle), -0.6, 0.6)
       )
     ).withTimeout(timeout).withName("autonDrive");
   }
 
-  //drives untill ya hit the ChSt then wait for one second to let the ChSt chill
+  //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
   public CommandBase tiltChStCommnad(double timeout, boolean goingForward){
     return autonDriveCommand(
       0.75 * (goingForward ? 1 : -1), 
@@ -131,26 +121,15 @@ public class DriveSubsystem extends SubsystemBase {
     ).until(
       ()->climbingChSt()
     ).withTimeout(timeout)
-    .andThen(autonDriveCommand(0, 0, 1))
+    .andThen(Commands.waitSeconds(1))
+    .andThen(autonDriveCommand(0.75 * (goingForward ? 1 : -1), 0, 1))
     .withName("tiltChSt");
   }
 
   public CommandBase engageChStCommand(boolean goingForward){
+    PIDController controller = new PIDController(0.2, 0, 0.01);
     /*
-    makes a ProfiledPIDController with a limit of velocity at .4 and a limit of acceleration at 4
-    acceleration limit is .4 * 10, which will allow the robot to go from 0 to .4 in 1/10 second
-    or .4 to -.4 in 1/5 second
-    */
-    ProfiledPIDController controller = new ProfiledPIDController(
-      0.2, 
-      0,
-      0.01,
-      new TrapezoidProfile.Constraints(
-        .4, 
-        4)
-    );
-    /*
-    sets the controller to only consider itself finished
+    sets the controller to only consider itself at the goal
     when the position is within .5 degrees of the goal
     and the velocity is less than .5 degrees/sec
     */
@@ -159,17 +138,17 @@ public class DriveSubsystem extends SubsystemBase {
     return tiltChStCommnad(4, goingForward)
     .andThen(
       autonDriveCommand(
-        controller.calculate(getAngle(), 0),
+        MathUtil.clamp(controller.calculate(getAngle(), 0), -0.5, 0.5),
         0, 
         15)
-    ).until(controller::atGoal).withName("enableChSt");
+    ).until(controller::atSetpoint).withName("enableChSt");
   }
 
   public CommandBase chStMobilityCommand(boolean goingForward){
     return tiltChStCommnad(4, goingForward)
     .andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, 10)
     ).until(
-      () -> getPitch() == 0
+      () -> Math.abs(getPitch()) < 0.5
     ).andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, .5)
     );
   }
@@ -180,5 +159,6 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("angle", getAngle());
     SmartDashboard.putNumber("rate", gyro.getRate());
     SmartDashboard.putNumber("pitch", getPitch());
+    SmartDashboard.putBoolean("rateAbove", warningFilter.calculate(Math.abs(gyro.getRate())) > 0.5 ? true : false);
   }
 }
