@@ -49,7 +49,7 @@ public class RobotContainer {
       m_armSubsystem.armDownCommand().alongWith(
         m_driveSubsystem.pauseCommand(3)
       ).withTimeout(3).andThen(
-        m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.8)
+        m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
       ).andThen(
         m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
         m_armSubsystem.armUpCommand().withTimeout(5)
@@ -88,7 +88,7 @@ public class RobotContainer {
       .andThen(
         m_driveSubsystem.chStMobilityCommand(true)
       ).andThen(
-        m_driveSubsystem.engageChStCommand(false)
+        m_driveSubsystem.engageChStCommand(true)
       )
     );
     

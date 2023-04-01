@@ -170,12 +170,16 @@ public class DriveSubsystem extends SubsystemBase {
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
-      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 10)
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 10)
       .until(() -> isFlat())
     )
     .andThen(
-      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
+      autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .5)
+    )
+    .andThen(
+      autonDriveCommand(0, 180, 3)
     );
+    
   }
   
   @Override
