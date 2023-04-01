@@ -118,7 +118,7 @@ public class DriveSubsystem extends SubsystemBase {
   //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
   public CommandBase tiltChStCommnad(boolean goingReverse){
     return autonDriveCommand(
-      0.75 * (goingReverse ? -1 : 1), 
+      0.85 * (goingReverse ? -1 : 1), 
       0, 
       10
     ).until(
@@ -141,15 +141,19 @@ public class DriveSubsystem extends SubsystemBase {
     and the velocity is less than xx degrees/sec
     */
     controller.setTolerance(1, .2);
-
+    controller.atSetpoint();
     return 
     tiltChStCommnad(goingReverse)
     .andThen(
       autonDriveCommand(
-        MathUtil.clamp(controller.calculate(getAngle(), 0), -0.6, 0.6),
+        MathUtil.clamp(
+          controller.calculate(getAngle(), 0),
+          -0.6, 
+          0.6
+        ),
         0, 
-        15)
-      .until(controller::atSetpoint).withName("enableChSt")
+        15
+      ).until(controller::atSetpoint).withName("enableChSt")
     );
   }
 

@@ -25,7 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase armUpCommand(){
-    return run(()->armMotor.set(.5)).withName("armUp");
+    return run(()->armMotor.set(.45)).withName("armUp");
   }
 
   public CommandBase armDownCommand(){
