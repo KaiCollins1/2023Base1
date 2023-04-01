@@ -121,9 +121,13 @@ public class DriveSubsystem extends SubsystemBase {
     ).until(
       ()->climbingChSt()
     ).withTimeout(5)
-    .andThen(Commands.waitSeconds(1))
+    .andThen(pauseCommand(1))
     .andThen(autonDriveCommand(0.75 * (goingReverse ? 1 : -1), 0, 1))
     .withName("tiltChSt");
+  }
+
+  public CommandBase pauseCommand(double time){
+    return run( () -> m_drive.arcadeDrive(0,0)).withTimeout(time);
   }
 
   public CommandBase engageChStCommand(boolean goingReverse){
@@ -135,7 +139,8 @@ public class DriveSubsystem extends SubsystemBase {
     */
     controller.setTolerance(.5, .5);
 
-    return tiltChStCommnad(goingReverse)
+    return 
+    tiltChStCommnad(goingReverse)
     .andThen(
       autonDriveCommand(
         MathUtil.clamp(controller.calculate(getAngle(), 0), -0.5, 0.5),

@@ -47,7 +47,7 @@ public class RobotContainer {
       //drive backwards straight for 2.8 sec at 75% speed
       //turn 180 and then lift arm up
       m_armSubsystem.armDownCommand().alongWith(
-        m_robotDrive.autonDriveCommand(0, 0, 3)
+        m_robotDrive.pauseCommand(3)
       ).withTimeout(3).andThen(
         m_robotDrive.autonDriveCommand(-0.75, 0, 2.8)
       ).andThen(
@@ -64,7 +64,7 @@ public class RobotContainer {
     
     m_chooser.addOption("TEST Score, engage", 
       m_armSubsystem.armDownCommand().alongWith(
-        m_robotDrive.autonDriveCommand(0, 0, 1.5)
+        m_robotDrive.pauseCommand(1.5)
       ).withTimeout(1.5)
       .andThen(
         m_robotDrive.engageChStCommand(true)
@@ -73,7 +73,7 @@ public class RobotContainer {
 
     m_chooser.addOption("TEST Score, Mobility, Engage",
       m_armSubsystem.armDownCommand().alongWith(
-        m_robotDrive.autonDriveCommand(0, 0, 1.5)
+        m_robotDrive.pauseCommand(1.5)
       ).withTimeout(1.5)
       .andThen(
         m_robotDrive.chStMobilityCommand(true)
@@ -85,7 +85,7 @@ public class RobotContainer {
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
       "Score", 
-      m_robotDrive.autonDriveCommand(0, 0, 3).
+      m_robotDrive.pauseCommand(3).
       alongWith(m_armSubsystem.armDownCommand().
       withTimeout(3))
     );
