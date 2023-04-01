@@ -78,7 +78,7 @@ public class DriveSubsystem extends SubsystemBase {
     return Math.abs(getPitch()) > 10;
   }
   public boolean isFlat(){
-    return Math.abs(getPitch()) < 0.75;
+    return Math.abs(getPitch()) < 1;
   }
 
   //Teleop Commands
@@ -107,23 +107,23 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   //Auton Commands
-  public CommandBase autonDriveCommand(double speed, double angle, double timeout){
+  public CommandBase autonDriveCommand(double speed, double goalAngle, double timeout){
     PIDController controller = new PIDController(0.38, 0.02, 0.055);
 
     //allows the driving to account for an angle mistake, or to turn to a specific angle
     return run(
       ()->m_drive.arcadeDrive(
         speed,
-        MathUtil.clamp(-0.2 * controller.calculate(getAngle(), angle), -0.8, 0.8)
+        MathUtil.clamp(-0.2 * controller.calculate(getAngle(), goalAngle), -0.8, 0.8)
       )
     ).withTimeout(timeout).withName("autonDrive");
   }
 
   //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
-  public CommandBase tiltChStCommnad(boolean goingReverse){
+  public CommandBase tiltChStCommnad(boolean goingReverse, double startAngle){
     return autonDriveCommand(
       0.85 * (goingReverse ? -1 : 1), 
-      0, 
+      startAngle, 
       10
     ).until(
       ()->climbingChSt()
@@ -141,9 +141,10 @@ public class DriveSubsystem extends SubsystemBase {
     when the position is within xx degrees of the goal
     and the velocity is less than xx degrees/sec
     */
+    final double startAngle = getAngle();
     controller.setTolerance(.5, .1);
     return 
-    tiltChStCommnad(goingReverse)
+    tiltChStCommnad(goingReverse, startAngle)
     .andThen(
       autonDriveCommand(
         MathUtil.clamp(
@@ -151,7 +152,7 @@ public class DriveSubsystem extends SubsystemBase {
           -0.55, 
           0.55
         ),
-        angleAtBeginning, 
+        startAngle, 
         15
       ).until(controller::atSetpoint)
       .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))
@@ -160,17 +161,17 @@ public class DriveSubsystem extends SubsystemBase {
 
   //prepare yourself for some absolutely wonderful code
   public CommandBase chStMobilityCommand(boolean goingReverse){
-    return tiltChStCommnad(goingReverse)
+    return tiltChStCommnad(goingReverse, 0)
     .withTimeout(5)
     .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 10)
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 4)
       .until(() -> isFlat())
     )
     .andThen(
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 10)
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 3)
       .until(() -> isFlat())
     )
     .andThen(

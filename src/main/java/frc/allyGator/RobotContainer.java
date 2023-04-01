@@ -64,13 +64,13 @@ public class RobotContainer {
       withTimeout(3))
     );
 
-    m_chooser.addOption("TEST turn 180", 
-    m_driveSubsystem.autonDriveCommand(0, 180, 30).withTimeout(30)
-    );
+    // m_chooser.addOption("TEST turn 180", 
+    // m_driveSubsystem.autonDriveCommand(0, 180, 30).withTimeout(30)
+    // );
 
-    m_chooser.addOption("TEST tiltChSt", m_driveSubsystem.tiltChStCommnad(true));
+    // m_chooser.addOption("TEST tiltChSt", m_driveSubsystem.tiltChStCommnad(true));
 
-    m_chooser.addOption("TEST chStMobility", m_driveSubsystem.chStMobilityCommand(true));
+    // m_chooser.addOption("TEST chStMobility", m_driveSubsystem.chStMobilityCommand(true));
     
     m_chooser.addOption("TEST Score, engage", 
       m_armSubsystem.armDownCommand().alongWith(
