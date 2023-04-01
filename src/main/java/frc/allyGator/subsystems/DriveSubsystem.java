@@ -133,7 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
     .withName("tiltChSt");
   }
 
-  public CommandBase engageChStCommand(boolean goingReverse){
+  public CommandBase engageChStCommand(boolean goingReverse, double angleAtBeginning){
     PIDController controller = new PIDController(0.01, 0, 0.01);
     SmartDashboard.putBoolean("debugEngageDone", false);
     /*
@@ -151,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
           -0.55, 
           0.55
         ),
-        0, 
+        angleAtBeginning, 
         15
       ).until(controller::atSetpoint)
       .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))

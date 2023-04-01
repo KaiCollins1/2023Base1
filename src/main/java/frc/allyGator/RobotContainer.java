@@ -77,7 +77,7 @@ public class RobotContainer {
         m_driveSubsystem.pauseCommand(1.5)
       ).withTimeout(1.5)
       .andThen(
-        m_driveSubsystem.engageChStCommand(true)
+        m_driveSubsystem.engageChStCommand(true, 0)
       )
     );
 
@@ -88,7 +88,7 @@ public class RobotContainer {
       .andThen(
         m_driveSubsystem.chStMobilityCommand(true)
       ).andThen(
-        m_driveSubsystem.engageChStCommand(true)
+        m_driveSubsystem.engageChStCommand(true, 180)
       )
     );
     
