@@ -115,14 +115,14 @@ public class DriveSubsystem extends SubsystemBase {
   //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
   public CommandBase tiltChStCommnad(boolean goingReverse){
     return autonDriveCommand(
-      0.75 * (goingReverse ? 1 : -1), 
+      0.75 * (goingReverse ? -1 : 1), 
       0, 
       10
     ).until(
       ()->climbingChSt()
     ).withTimeout(5)
     .andThen(pauseCommand(1))
-    .andThen(autonDriveCommand(0.75 * (goingReverse ? 1 : -1), 0, 1))
+    .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), 0, 1))
     .withName("tiltChSt");
   }
 
@@ -137,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase {
     when the position is within .5 degrees of the goal
     and the velocity is less than .5 degrees/sec
     */
-    controller.setTolerance(.5, .5);
+    controller.setTolerance(1, .5);
 
     return 
     tiltChStCommnad(goingReverse)
@@ -151,10 +151,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   public CommandBase chStMobilityCommand(boolean goingReverse){
     return tiltChStCommnad(goingReverse)
-    .andThen(autonDriveCommand(.4 * (goingReverse?1:-1), 0, 10)
+    .withTimeout(5)
+    .andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, 10)
     ).until(
       () -> Math.abs(getPitch()) < 0.5
-    ).andThen(autonDriveCommand(.4 * (goingReverse?1:-1), 0, .5)
+    ).andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, .5)
     );
   }
   
