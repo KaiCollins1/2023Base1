@@ -161,10 +161,10 @@ public class DriveSubsystem extends SubsystemBase {
     return tiltChStCommnad(goingReverse)
     .withTimeout(5)
     .andThen(
-      autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, 10)
+      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 10)
       .until(() -> onFloor())
     )
-    .andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, .5)
+    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
     );
   }
   
