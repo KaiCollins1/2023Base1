@@ -164,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 10)
       .until(() -> onFloor())
     )
-    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
+    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .3)
     );
   }
   
