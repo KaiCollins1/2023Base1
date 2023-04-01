@@ -78,6 +78,9 @@ public class DriveSubsystem extends SubsystemBase {
   public boolean climbingChSt(){
     return Math.abs(getPitch()) > 10;
   }
+  public boolean onFloor(){
+    return Math.abs(getPitch()) < 0.75;
+  }
 
   //Teleop Commands
   public CommandBase arcadeDriveCommand(DoubleSupplier fwd, DoubleSupplier rot, DoubleSupplier slowDown){
@@ -152,10 +155,11 @@ public class DriveSubsystem extends SubsystemBase {
   public CommandBase chStMobilityCommand(boolean goingReverse){
     return tiltChStCommnad(goingReverse)
     .withTimeout(5)
-    .andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, 10)
-    ).until(
-      () -> Math.abs(getPitch()) < 0.5
-    ).andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, .5)
+    .andThen(
+      autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, 10)
+      .until(() -> onFloor())
+    )
+    .andThen(autonDriveCommand(.4 * (goingReverse ? -1: 1), 0, .5)
     );
   }
   
