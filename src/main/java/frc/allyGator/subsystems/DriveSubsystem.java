@@ -102,9 +102,14 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
+  //pauses while satisfying motor watchdog
+  public CommandBase pauseCommand(double time){
+    return run(() -> m_drive.arcadeDrive(0,0)).withTimeout(time);
+  }
+
   //Auton Commands
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    PIDController controller = new PIDController(0.4, 0.02, 0.055);
+    PIDController controller = new PIDController(0.38, 0.02, 0.055);
 
     //allows the driving to account for an angle mistake, or to turn to a specific angle
     return run(
@@ -125,36 +130,31 @@ public class DriveSubsystem extends SubsystemBase {
       ()->climbingChSt()
     ).withTimeout(5)
     .andThen(pauseCommand(1))
-    .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), 0, 1))
+    .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), 0, 1.1))
     .withName("tiltChSt");
   }
 
-  public CommandBase pauseCommand(double time){
-    return run( () -> m_drive.arcadeDrive(0,0)).withTimeout(time);
-  }
-
   public CommandBase engageChStCommand(boolean goingReverse){
-    PIDController controller = new PIDController(0.1, 0, 0.01);
+    PIDController controller = new PIDController(0.01, 0, 0.01);
     /*
     sets the controller to only consider itself at the goal
     when the position is within xx degrees of the goal
     and the velocity is less than xx degrees/sec
     */
-    controller.setTolerance(1, .2);
-    controller.atSetpoint();
+    controller.setTolerance(.5, .1);
     return 
     tiltChStCommnad(goingReverse)
     .andThen(
       autonDriveCommand(
         MathUtil.clamp(
-          controller.calculate(getAngle(), 0),
-          -0.6, 
-          0.6
+          controller.calculate(getPitch(), 0),
+          -0.55, 
+          0.55
         ),
         0, 
         15
-      ).until(controller::atSetpoint).withName("enableChSt")
-    );
+      ).until(controller::atSetpoint)
+    ).withName("enableChSt");
   }
 
   public CommandBase chStMobilityCommand(boolean goingReverse){
@@ -174,6 +174,6 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("angle", getAngle());
     SmartDashboard.putNumber("rate", gyro.getRate());
     SmartDashboard.putNumber("pitch", getPitch());
-    SmartDashboard.putBoolean("rateAbove", warningFilter.calculate(Math.abs(gyro.getRate())) > 0.5 ? true : false);
+    SmartDashboard.putBoolean("rateAbove", warningFilter.calculate(Math.abs(gyro.getRate())) > 0.1 ? true : false);
   }
 }
