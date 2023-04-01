@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.allyGator.Constants.DriveConstants;
 
@@ -78,7 +77,7 @@ public class DriveSubsystem extends SubsystemBase {
   public boolean climbingChSt(){
     return Math.abs(getPitch()) > 10;
   }
-  public boolean onFloor(){
+  public boolean isFlat(){
     return Math.abs(getPitch()) < 0.75;
   }
 
@@ -136,6 +135,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public CommandBase engageChStCommand(boolean goingReverse){
     PIDController controller = new PIDController(0.01, 0, 0.01);
+    SmartDashboard.putBoolean("debugEngageDone", false);
     /*
     sets the controller to only consider itself at the goal
     when the position is within xx degrees of the goal
@@ -154,6 +154,7 @@ public class DriveSubsystem extends SubsystemBase {
         0, 
         15
       ).until(controller::atSetpoint)
+      .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))
     ).withName("enableChSt");
   }
 
@@ -162,17 +163,18 @@ public class DriveSubsystem extends SubsystemBase {
     return tiltChStCommnad(goingReverse)
     .withTimeout(5)
     .andThen(
-      autonDriveCommand(.35 * (goingReverse ? -1 : 1), 0, 10)
-      .until(() -> onFloor())
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 10)
+      .until(() -> isFlat())
     )
     .andThen(
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 10)
-      .until(() -> onFloor())
+      .until(() -> isFlat())
     )
-    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
+    .andThen(
+      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
     );
   }
   
