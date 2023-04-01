@@ -134,22 +134,23 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public CommandBase engageChStCommand(boolean goingReverse){
-    PIDController controller = new PIDController(0.2, 0, 0.01);
+    PIDController controller = new PIDController(0.1, 0, 0.01);
     /*
     sets the controller to only consider itself at the goal
     when the position is within .5 degrees of the goal
     and the velocity is less than .5 degrees/sec
     */
-    controller.setTolerance(1, .5);
+    controller.setTolerance(1, .2);
 
     return 
     tiltChStCommnad(goingReverse)
     .andThen(
       autonDriveCommand(
-        MathUtil.clamp(controller.calculate(getAngle(), 0), -0.5, 0.5),
+        MathUtil.clamp(controller.calculate(getAngle(), 0), -0.6, 0.6),
         0, 
         15)
-    ).until(controller::atSetpoint).withName("enableChSt");
+      .until(controller::atSetpoint).withName("enableChSt")
+    );
   }
 
   public CommandBase chStMobilityCommand(boolean goingReverse){
