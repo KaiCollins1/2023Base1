@@ -95,7 +95,7 @@ public class DriveSubsystem extends SubsystemBase {
     */
     return run(
       () -> m_drive.arcadeDrive(
-        -(1 - (.25*slowDown.getAsDouble())) * fwd.getAsDouble(),
+        -(1 - (.5*slowDown.getAsDouble())) * fwd.getAsDouble(),
         -DriveConstants.kMaxTurnSpeed*rot.getAsDouble()
       )
     ).withName("arcadeDrive");
@@ -157,14 +157,22 @@ public class DriveSubsystem extends SubsystemBase {
     ).withName("enableChSt");
   }
 
+  //prepare yourself for some absolutely wonderful code
   public CommandBase chStMobilityCommand(boolean goingReverse){
     return tiltChStCommnad(goingReverse)
     .withTimeout(5)
     .andThen(
+      autonDriveCommand(.35 * (goingReverse ? -1 : 1), 0, 10)
+      .until(() -> onFloor())
+    )
+    .andThen(
+      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 1)
+    )
+    .andThen(
       autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 10)
       .until(() -> onFloor())
     )
-    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .3)
+    .andThen(autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .5)
     );
   }
   
