@@ -62,7 +62,7 @@ public class RobotContainer {
     
     m_chooser.addOption("TEST Score, engage", 
       m_armSubsystem.armDownCommand().alongWith(
-        m_robotDrive.autonDriveCommand(0, 0, 3)
+        m_robotDrive.autonDriveCommand(0, 0, 1.5)
       ).withTimeout(1.5)
       .andThen(
         m_robotDrive.engageChStCommand(false)
@@ -71,7 +71,7 @@ public class RobotContainer {
 
     m_chooser.addOption("TEST Score, Mobility, Engage",
       m_armSubsystem.armDownCommand().alongWith(
-        m_robotDrive.autonDriveCommand(0, 0, 3)
+        m_robotDrive.autonDriveCommand(0, 0, 1.5)
       ).withTimeout(1.5)
       .andThen(
         m_robotDrive.chStMobilityCommand(false)

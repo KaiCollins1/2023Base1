@@ -20,12 +20,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Ally extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-
-  private double p = .1;
-  private double i = 0;
-  private double d = 0;
-  private double pTol = 2;
-  private double vTol = 5;
   private PowerDistribution pde = new PowerDistribution();
 
   /**
@@ -40,11 +34,6 @@ public class Ally extends TimedRobot {
     m_robotContainer.calibrate();
     
     CameraServer.startAutomaticCapture();
-    SmartDashboard.putNumber("p", p);
-    SmartDashboard.putNumber("i", i);
-    SmartDashboard.putNumber("d", d);
-    SmartDashboard.putNumber("pTol", pTol);
-    SmartDashboard.putNumber("vTol", vTol);
 
   }
 
@@ -104,8 +93,6 @@ public class Ally extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //resets stuff like the gyro
-    m_robotContainer.calibrate();
   }
   
 

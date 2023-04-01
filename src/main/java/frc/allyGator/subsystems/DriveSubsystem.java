@@ -101,13 +101,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   //Auton Commands
   public CommandBase autonDriveCommand(double speed, double angle, double timeout){
-    PIDController controller = new PIDController(0.35, 0.0, 0.04);
+    PIDController controller = new PIDController(0.4, 0.02, 0.055);
 
     //allows the driving to account for an angle mistake, or to turn to a specific angle
     return run(
       ()->m_drive.arcadeDrive(
         speed,
-        MathUtil.clamp(-controller.calculate(getAngle(), angle), -0.6, 0.6)
+        MathUtil.clamp(-0.2 * controller.calculate(getAngle(), angle), -0.8, 0.8)
       )
     ).withTimeout(timeout).withName("autonDrive");
   }
