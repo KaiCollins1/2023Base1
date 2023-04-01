@@ -113,20 +113,20 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
-  public CommandBase tiltChStCommnad(double timeout, boolean goingForward){
+  public CommandBase tiltChStCommnad(boolean goingReverse){
     return autonDriveCommand(
-      0.75 * (goingForward ? 1 : -1), 
+      0.75 * (goingReverse ? 1 : -1), 
       0, 
       10
     ).until(
       ()->climbingChSt()
-    ).withTimeout(timeout)
+    ).withTimeout(5)
     .andThen(Commands.waitSeconds(1))
-    .andThen(autonDriveCommand(0.75 * (goingForward ? 1 : -1), 0, 1))
+    .andThen(autonDriveCommand(0.75 * (goingReverse ? 1 : -1), 0, 1))
     .withName("tiltChSt");
   }
 
-  public CommandBase engageChStCommand(boolean goingForward){
+  public CommandBase engageChStCommand(boolean goingReverse){
     PIDController controller = new PIDController(0.2, 0, 0.01);
     /*
     sets the controller to only consider itself at the goal
@@ -135,7 +135,7 @@ public class DriveSubsystem extends SubsystemBase {
     */
     controller.setTolerance(.5, .5);
 
-    return tiltChStCommnad(4, goingForward)
+    return tiltChStCommnad(goingReverse)
     .andThen(
       autonDriveCommand(
         MathUtil.clamp(controller.calculate(getAngle(), 0), -0.5, 0.5),
@@ -144,12 +144,12 @@ public class DriveSubsystem extends SubsystemBase {
     ).until(controller::atSetpoint).withName("enableChSt");
   }
 
-  public CommandBase chStMobilityCommand(boolean goingForward){
-    return tiltChStCommnad(4, goingForward)
-    .andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, 10)
+  public CommandBase chStMobilityCommand(boolean goingReverse){
+    return tiltChStCommnad(goingReverse)
+    .andThen(autonDriveCommand(.4 * (goingReverse?1:-1), 0, 10)
     ).until(
       () -> Math.abs(getPitch()) < 0.5
-    ).andThen(autonDriveCommand(.4 * (goingForward?1:-1), 0, .5)
+    ).andThen(autonDriveCommand(.4 * (goingReverse?1:-1), 0, .5)
     );
   }
   

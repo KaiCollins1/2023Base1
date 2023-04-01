@@ -59,13 +59,15 @@ public class RobotContainer {
     m_chooser.addOption("TEST turn 180", 
     m_robotDrive.autonDriveCommand(0, 180, 30).withTimeout(30)
     );
+
+    m_chooser.addOption("TEST tiltChSt", m_robotDrive.tiltChStCommnad(true));
     
     m_chooser.addOption("TEST Score, engage", 
       m_armSubsystem.armDownCommand().alongWith(
         m_robotDrive.autonDriveCommand(0, 0, 1.5)
       ).withTimeout(1.5)
       .andThen(
-        m_robotDrive.engageChStCommand(false)
+        m_robotDrive.engageChStCommand(true)
       )
     );
 
@@ -74,9 +76,9 @@ public class RobotContainer {
         m_robotDrive.autonDriveCommand(0, 0, 1.5)
       ).withTimeout(1.5)
       .andThen(
-        m_robotDrive.chStMobilityCommand(false)
+        m_robotDrive.chStMobilityCommand(true)
       ).andThen(
-        m_robotDrive.engageChStCommand(true)
+        m_robotDrive.engageChStCommand(false)
       )
     );
 
