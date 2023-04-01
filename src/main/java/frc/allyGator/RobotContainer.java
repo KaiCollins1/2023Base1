@@ -41,20 +41,32 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
     
     //sendableChooser here
-    m_chooser.setDefaultOption(
-      "Score, Mobility, Turn+armUp", 
-      //Drop arm and satisfy motor watchdog for 3 sec
-      //drive backwards straight for 2.8 sec at 75% speed
-      //turn 180 and then lift arm up
-      m_armSubsystem.armDownCommand().alongWith(
-        m_driveSubsystem.pauseCommand(3)
-      ).withTimeout(3).andThen(
-        m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
-      ).andThen(
-        m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
-        m_armSubsystem.armUpCommand().withTimeout(5)
-      ))
-    );
+
+    m_chooser.setDefaultOption("TEST Score, Mobility, Dock",
+    m_armSubsystem.armDownCommand().alongWith(
+      m_driveSubsystem.pauseCommand(1.5)
+    ).withTimeout(1.5)
+    .andThen(
+      m_driveSubsystem.chStMobilityCommand(true)
+    ).andThen(
+      m_driveSubsystem.dockChStCommand(true, 180)
+    )
+  );
+  
+  m_chooser.addOption(
+    "Score, Mobility, Turn+armUp", 
+    //Drop arm and satisfy motor watchdog for 3 sec
+    //drive backwards straight for 2.8 sec at 75% speed
+    //turn 180 and then lift arm up
+    m_armSubsystem.armDownCommand().alongWith(
+      m_driveSubsystem.pauseCommand(3)
+    ).withTimeout(3).andThen(
+      m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
+    ).andThen(
+      m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
+      m_armSubsystem.armUpCommand().withTimeout(5)
+    ))
+  );
 
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
@@ -68,29 +80,29 @@ public class RobotContainer {
     // m_driveSubsystem.autonDriveCommand(0, 180, 30).withTimeout(30)
     // );
 
-    // m_chooser.addOption("TEST tiltChSt", m_driveSubsystem.tiltChStCommnad(true));
+    // m_chooser.addOption("TEST tiltChSt", m_driveSubsystem.tiltChStCommnad(true, 0));
 
     // m_chooser.addOption("TEST chStMobility", m_driveSubsystem.chStMobilityCommand(true));
     
-    m_chooser.addOption("TEST Score, engage", 
-      m_armSubsystem.armDownCommand().alongWith(
-        m_driveSubsystem.pauseCommand(1.5)
-      ).withTimeout(1.5)
-      .andThen(
-        m_driveSubsystem.engageChStCommand(true, 0)
-      )
-    );
+    // m_chooser.addOption("TEST Score, engage", 
+    //   m_armSubsystem.armDownCommand().alongWith(
+    //     m_driveSubsystem.pauseCommand(1.5)
+    //   ).withTimeout(1.5)
+    //   .andThen(
+    //     m_driveSubsystem.engageChStCommand(true, 0)
+    //   )
+    // );
 
-    m_chooser.addOption("TEST Score, Mobility, Engage",
-      m_armSubsystem.armDownCommand().alongWith(
-        m_driveSubsystem.pauseCommand(1.5)
-      ).withTimeout(1.5)
-      .andThen(
-        m_driveSubsystem.chStMobilityCommand(true)
-      ).andThen(
-        m_driveSubsystem.engageChStCommand(true, 180)
-      )
-    );
+    // m_chooser.addOption("TEST Score, Mobility, Engage",
+    //   m_armSubsystem.armDownCommand().alongWith(
+    //     m_driveSubsystem.pauseCommand(1.5)
+    //   ).withTimeout(1.5)
+    //   .andThen(
+    //     m_driveSubsystem.chStMobilityCommand(true)
+    //   ).andThen(
+    //     m_driveSubsystem.engageChStCommand(true, 180)
+    //   )
+    // );
     
     //put m_chooser on the dashboard becasue we need to be able to select auton
     SmartDashboard.putData(m_chooser);

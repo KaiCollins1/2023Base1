@@ -129,34 +129,46 @@ public class DriveSubsystem extends SubsystemBase {
       ()->climbingChSt()
     ).withTimeout(5)
     .andThen(pauseCommand(1))
-    .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), 0, 1.1))
+    .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), startAngle, 0.8))
     .withName("tiltChSt");
   }
 
   public CommandBase engageChStCommand(boolean goingReverse, double angleAtBeginning){
-    PIDController controller = new PIDController(0.01, 0, 0.01);
+    PIDController controller = new PIDController(0.95, 0, 0.0);
     SmartDashboard.putBoolean("debugEngageDone", false);
     /*
     sets the controller to only consider itself at the goal
     when the position is within xx degrees of the goal
     and the velocity is less than xx degrees/sec
     */
-    final double startAngle = getAngle();
-    controller.setTolerance(.5, .1);
+    //final double startAngle = getAngle()
+    controller.setTolerance(.9, .1);
     return 
-    tiltChStCommnad(goingReverse, startAngle)
+    tiltChStCommnad(goingReverse, angleAtBeginning)
     .andThen(
       autonDriveCommand(
         MathUtil.clamp(
-          controller.calculate(getPitch(), 0),
-          -0.55, 
-          0.55
+          -controller.calculate(getPitch(), 0),
+          -0.6, 
+          0.6
         ),
-        startAngle, 
+        angleAtBeginning, 
         15
       ).until(controller::atSetpoint)
       .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))
     ).withName("enableChSt");
+  }
+
+  public CommandBase dockChStCommand(boolean goingReverse, double angleAtBeginning){
+    return 
+    tiltChStCommnad(goingReverse, angleAtBeginning)
+    .andThen(
+      autonDriveCommand(0.43 * (goingReverse ? -1 : 1), angleAtBeginning, 2)
+      .until(() -> isFlat())
+    )
+    .andThen(
+      autonDriveCommand(0, 90, 3)
+    );
   }
 
   //prepare yourself for some absolutely wonderful code
@@ -164,11 +176,14 @@ public class DriveSubsystem extends SubsystemBase {
     return tiltChStCommnad(goingReverse, 0)
     .withTimeout(5)
     .andThen(
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 1.4)
+    )
+    .andThen(
       autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 4)
       .until(() -> isFlat())
     )
     .andThen(
-      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, 1)
+      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
       autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 3)
@@ -178,7 +193,7 @@ public class DriveSubsystem extends SubsystemBase {
       autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .5)
     )
     .andThen(
-      autonDriveCommand(0, 180, 3)
+      autonDriveCommand(0, 180, 1.3)
     );
     
   }
