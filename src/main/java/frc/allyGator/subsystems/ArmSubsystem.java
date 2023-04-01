@@ -25,11 +25,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase armUpCommand(){
-    return run(()->armMotor.set(.4)).withName("armUp");
+    return run(()->armMotor.set(.5)).withName("armUp");
   }
 
   public CommandBase armDownCommand(){
-    return run(()->armMotor.set(-.2)).withName("armDown");
+    return run(()->armMotor.set(-.3)).withName("armDown");
   }
 
   @Override
