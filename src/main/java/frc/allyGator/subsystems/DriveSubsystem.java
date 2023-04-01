@@ -137,8 +137,8 @@ public class DriveSubsystem extends SubsystemBase {
     PIDController controller = new PIDController(0.1, 0, 0.01);
     /*
     sets the controller to only consider itself at the goal
-    when the position is within .5 degrees of the goal
-    and the velocity is less than .5 degrees/sec
+    when the position is within xx degrees of the goal
+    and the velocity is less than xx degrees/sec
     */
     controller.setTolerance(1, .2);
 
