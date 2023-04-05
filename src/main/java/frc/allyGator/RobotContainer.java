@@ -25,6 +25,7 @@ public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   SendableChooser<CommandBase> m_chooser = new SendableChooser<>();
+  private NetworkTableEntry autonDelay = Shuffleboard.selectTab("SmartDashboard").add("Auton Delay", 1.5).getEntry();
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -44,8 +45,8 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("TEST Score, Mobility, Dock",
     m_armSubsystem.armDownCommand().alongWith(
-      m_driveSubsystem.pauseCommand(1.5)
-    ).withTimeout(1.5)
+      m_driveSubsystem.pauseCommand(autonDelay.getDouble(1.5))
+    ).withTimeout(autonDelay.getDouble(1.5))
     .andThen(
       m_driveSubsystem.chStMobilityCommand(true)
     ).andThen(
@@ -59,8 +60,8 @@ public class RobotContainer {
     //drive backwards straight for 2.8 sec at 75% speed
     //turn 180 and then lift arm up
     m_armSubsystem.armDownCommand().alongWith(
-      m_driveSubsystem.pauseCommand(3)
-    ).withTimeout(3).andThen(
+      m_driveSubsystem.pauseCommand(autonDelay.getDouble(1.5))
+    ).withTimeout(autonDelay.getDouble(1.5)).andThen(
       m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
     ).andThen(
       m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
@@ -71,9 +72,9 @@ public class RobotContainer {
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
       "Score", 
-      m_driveSubsystem.pauseCommand(3).
+      m_driveSubsystem.pauseCommand(autonDelay.getDouble(1.5)).
       alongWith(m_armSubsystem.armDownCommand().
-      withTimeout(3))
+      withTimeout(autonDelay.getDouble(1.5)))
     );
 
     // m_chooser.addOption("TEST turn 180", 
