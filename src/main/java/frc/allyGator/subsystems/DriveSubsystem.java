@@ -75,10 +75,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   //climbing ChSt? then this returns true
   public boolean climbingChSt(){
-    return Math.abs(getPitch()) > 10;
+    return Math.abs(getPitch()) > 11;
   }
   public boolean isFlat(){
-    return Math.abs(getPitch()) < 1;
+    return Math.abs(getPitch()) < 0.75;
   }
 
   //Teleop Commands
@@ -122,52 +122,52 @@ public class DriveSubsystem extends SubsystemBase {
   //drives untill ya hit the ChSt then wait for one second to let the ChSt chill then drive up it a bit
   public CommandBase tiltChStCommnad(boolean goingReverse, double startAngle){
     return autonDriveCommand(
-      0.85 * (goingReverse ? -1 : 1), 
+      0.9 * (goingReverse ? -1 : 1), 
       startAngle, 
-      10
+      3
     ).until(
       ()->climbingChSt()
     ).withTimeout(5)
-    .andThen(pauseCommand(1))
+    .andThen(pauseCommand(.5))
     .andThen(autonDriveCommand(0.75 * (goingReverse ? -1 : 1), startAngle, 0.8))
     .withName("tiltChSt");
   }
 
-  public CommandBase engageChStCommand(boolean goingReverse, double angleAtBeginning){
-    PIDController controller = new PIDController(0.95, 0, 0.0);
-    SmartDashboard.putBoolean("debugEngageDone", false);
-    /*
-    sets the controller to only consider itself at the goal
-    when the position is within xx degrees of the goal
-    and the velocity is less than xx degrees/sec
-    */
-    //final double startAngle = getAngle()
-    controller.setTolerance(.9, .1);
-    return 
-    tiltChStCommnad(goingReverse, angleAtBeginning)
-    .andThen(
-      autonDriveCommand(
-        MathUtil.clamp(
-          -controller.calculate(getPitch(), 0),
-          -0.6, 
-          0.6
-        ),
-        angleAtBeginning, 
-        15
-      ).until(controller::atSetpoint)
-      .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))
-    ).withName("enableChSt");
-  }
+  // public CommandBase engageChStCommand(boolean goingReverse, double angleAtBeginning){
+  //   PIDController controller = new PIDController(0.95, 0, 0.0);
+  //   SmartDashboard.putBoolean("debugEngageDone", false);
+  //   /*
+  //   sets the controller to only consider itself at the goal
+  //   when the position is within xx degrees of the goal
+  //   and the velocity is less than xx degrees/sec
+  //   */
+  //   //final double startAngle = getAngle()
+  //   controller.setTolerance(.9, .1);
+  //   return 
+  //   tiltChStCommnad(goingReverse, angleAtBeginning)
+  //   .andThen(
+  //     autonDriveCommand(
+  //       MathUtil.clamp(
+  //         -controller.calculate(getPitch(), 0),
+  //         -0.6, 
+  //         0.6
+  //       ),
+  //       angleAtBeginning, 
+  //       15
+  //     ).until(controller::atSetpoint)
+  //     .andThen(() -> SmartDashboard.putBoolean("debugEngageDone", true))
+  //   ).withName("enableChSt");
+  // }
 
   public CommandBase dockChStCommand(boolean goingReverse, double angleAtBeginning){
     return 
     tiltChStCommnad(goingReverse, angleAtBeginning)
     .andThen(
-      autonDriveCommand(0.43 * (goingReverse ? -1 : 1), angleAtBeginning, 2)
+      autonDriveCommand(0.5 * (goingReverse ? -1 : 1), angleAtBeginning, 2)
       .until(() -> isFlat())
     )
     .andThen(
-      autonDriveCommand(0, 90, 3)
+      autonDriveCommand(0, 90, 1.5)
     );
   }
 
@@ -176,21 +176,14 @@ public class DriveSubsystem extends SubsystemBase {
     return tiltChStCommnad(goingReverse, 0)
     .withTimeout(5)
     .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 1.4)
+      autonDriveCommand(.8 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 4)
+      autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .75)
       .until(() -> isFlat())
     )
     .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 1)
-    )
-    .andThen(
-      autonDriveCommand(.5 * (goingReverse ? -1 : 1), 0, 3)
-      .until(() -> isFlat())
-    )
-    .andThen(
-      autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .5)
+      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .1)
     )
     .andThen(
       autonDriveCommand(0, 180, 1.3)

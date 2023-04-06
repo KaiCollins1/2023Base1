@@ -50,7 +50,7 @@ public class RobotContainer {
 
     //sendableChooser here
 
-    m_chooser.setDefaultOption("TEST Score, Mobility, Dock",
+    m_chooser.setDefaultOption("M: Score, Mobility, Dock",
     m_armSubsystem.armDownCommand().alongWith(
       m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
     ).withTimeout(Constants.kAutonDelay)
@@ -58,11 +58,26 @@ public class RobotContainer {
       m_driveSubsystem.chStMobilityCommand(true)
     ).andThen(
       m_driveSubsystem.dockChStCommand(true, 180)
-    )
+    ).andThen(
+      m_driveSubsystem.autonDriveCommand(.1, 90, 2).alongWith(
+      m_armSubsystem.armUpCommand().withTimeout(2)
+    ))
   );
-  
+
+  m_chooser.addOption("M: Score, Mobility, Turn+armUp",
+  m_armSubsystem.armDownCommand().alongWith(
+    m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
+  ).withTimeout(Constants.kAutonDelay)
+  .andThen(
+    m_driveSubsystem.chStMobilityCommand(true)
+  ).andThen(
+    m_driveSubsystem.autonDriveCommand(.1, 180, 2).alongWith(
+    m_armSubsystem.armUpCommand().withTimeout(2)
+  ))
+);
+   
   m_chooser.addOption(
-    "Score, Mobility, Turn+armUp", 
+    "S: Score, Mobility, Turn+armUp", 
     //Drop arm and satisfy motor watchdog for 3 sec
     //drive backwards straight for 2.8 sec at 75% speed
     //turn 180 and then lift arm up
@@ -71,14 +86,14 @@ public class RobotContainer {
     ).withTimeout(Constants.kAutonDelay).andThen(
       m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
     ).andThen(
-      m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
-      m_armSubsystem.armUpCommand().withTimeout(5)
+      m_driveSubsystem.autonDriveCommand(.1, 180, 2).alongWith(
+      m_armSubsystem.armUpCommand().withTimeout(2)
     ))
   );
 
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
-      "Score", 
+      "ANY: Score", 
       m_driveSubsystem.pauseCommand(Constants.kAutonDelay).
       alongWith(m_armSubsystem.armDownCommand().
       withTimeout(Constants.kAutonDelay))
