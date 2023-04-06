@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.allyGator.Constants.DriveConstants;
 import frc.allyGator.subsystems.ArmSubsystem;
 import frc.allyGator.subsystems.DriveSubsystem;
 
@@ -29,8 +30,6 @@ public class RobotContainer {
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
 
   SendableChooser<CommandBase> m_chooser = new SendableChooser<>();
-  SendableChooser<Double> m_autonDelay = new SendableChooser<>();
-  private double m_autonDelayVar = 1.5;
 
   // private ShuffleboardTab tab = Shuffleboard.getTab("SmartDashboard");
   // private GenericEntry autonDelay = tab.add("Auton Delay", 1.5).getEntry();
@@ -49,20 +48,12 @@ public class RobotContainer {
     m_controller.leftBumper().whileTrue(m_armSubsystem.armDownCommand());
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
 
-    m_autonDelay.setDefaultOption("default", 1.5);
-    m_autonDelay.addOption("+1", 2.5);
-    m_autonDelay.addOption("+2", 3.5);
-    m_autonDelay.addOption("+3", 4.5);
-    m_autonDelay.addOption("+4", 5.5);
-
-
-    
     //sendableChooser here
 
     m_chooser.setDefaultOption("TEST Score, Mobility, Dock",
     m_armSubsystem.armDownCommand().alongWith(
-      m_driveSubsystem.pauseCommand(m_autonDelayVar)
-    ).withTimeout(m_autonDelayVar)
+      m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
+    ).withTimeout(Constants.kAutonDelay)
     .andThen(
       m_driveSubsystem.chStMobilityCommand(true)
     ).andThen(
@@ -76,8 +67,8 @@ public class RobotContainer {
     //drive backwards straight for 2.8 sec at 75% speed
     //turn 180 and then lift arm up
     m_armSubsystem.armDownCommand().alongWith(
-      m_driveSubsystem.pauseCommand(m_autonDelayVar)
-    ).withTimeout(m_autonDelayVar).andThen(
+      m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
+    ).withTimeout(Constants.kAutonDelay).andThen(
       m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
     ).andThen(
       m_driveSubsystem.autonDriveCommand(.1, 180, 5).alongWith(
@@ -88,9 +79,9 @@ public class RobotContainer {
     //Drop arm and satisfy motor watchdog for 3 sec
     m_chooser.addOption(
       "Score", 
-      m_driveSubsystem.pauseCommand(m_autonDelayVar).
+      m_driveSubsystem.pauseCommand(Constants.kAutonDelay).
       alongWith(m_armSubsystem.armDownCommand().
-      withTimeout(m_autonDelayVar))
+      withTimeout(Constants.kAutonDelay))
     );
 
     // m_chooser.addOption("TEST turn 180", 
@@ -123,7 +114,6 @@ public class RobotContainer {
     
     //put m_chooser on the dashboard becasue we need to be able to select auton
     SmartDashboard.putData(m_chooser);
-    SmartDashboard.putData(m_autonDelay);
   }
 
   public void calibrate(){
@@ -142,8 +132,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return the selected auton command.
-    m_autonDelayVar = m_autonDelay.getSelected();
+    // // return the selected auton command.
     return m_chooser.getSelected();
   }
 }
