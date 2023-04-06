@@ -4,6 +4,7 @@
 
 package frc.allyGator;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -29,7 +30,7 @@ public class RobotContainer {
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   SendableChooser<CommandBase> m_chooser = new SendableChooser<>();
   private ShuffleboardTab tab = Shuffleboard.getTab("SmartDashboard");
-  private NetworkTableEntry autonDelay = tab.add("Auton Delay", 1.5).getEntry();
+  private GenericEntry autonDelay = tab.add("Auton Delay", 1.5).getEntry();
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
