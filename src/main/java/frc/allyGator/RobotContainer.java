@@ -49,34 +49,8 @@ public class RobotContainer {
     m_controller.rightBumper().whileTrue(m_armSubsystem.armUpCommand());
 
     //sendableChooser here
-
-    m_chooser.setDefaultOption("M: Score, Mobility, Dock",
-    m_armSubsystem.armDownCommand().alongWith(
-      m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
-    ).withTimeout(Constants.kAutonDelay)
-    .andThen(
-      m_driveSubsystem.chStMobilityCommand(true)
-    ).andThen(
-      m_driveSubsystem.dockChStCommand(true, 180)
-    ).andThen(
-      m_driveSubsystem.autonDriveCommand(.1, 90, 2).alongWith(
-      m_armSubsystem.armUpCommand().withTimeout(2)
-    ))
-  );
-
-  m_chooser.addOption("M: Score, Mobility, Turn+armUp",
-  m_armSubsystem.armDownCommand().alongWith(
-    m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
-  ).withTimeout(Constants.kAutonDelay)
-  .andThen(
-    m_driveSubsystem.chStMobilityCommand(true)
-  ).andThen(
-    m_driveSubsystem.autonDriveCommand(.1, 180, 2).alongWith(
-    m_armSubsystem.armUpCommand().withTimeout(2)
-  ))
-);
    
-  m_chooser.addOption(
+  m_chooser.setDefaultOption(
     "S: Score, Mobility, Turn+armUp", 
     //Drop arm and satisfy motor watchdog for 3 sec
     //drive backwards straight for 2.8 sec at 75% speed
@@ -86,7 +60,45 @@ public class RobotContainer {
     ).withTimeout(Constants.kAutonDelay).andThen(
       m_driveSubsystem.autonDriveCommand(-0.75, 0, 2.5)
     ).andThen(
-      m_driveSubsystem.autonDriveCommand(.1, 180, 2).alongWith(
+      m_driveSubsystem.autonDriveCommand(0, 180, 2).alongWith(
+      m_armSubsystem.armUpCommand().withTimeout(2)
+    ))
+  );
+
+    //score and satisfy motor watchdog
+    //tilt chSt
+    //climb over chSt
+    //rotate 180
+    //climb on chSt
+    //dock
+    //put arm up
+    m_chooser.addOption("M: Score, Mobility, Dock",
+    m_armSubsystem.armDownCommand().alongWith(
+      m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
+    ).withTimeout(Constants.kAutonDelay)
+    .andThen(
+      m_driveSubsystem.chStMobilityCommand(true)
+    ).andThen(
+      m_driveSubsystem.dockChStCommand(true, 180)
+    ).andThen(
+      m_driveSubsystem.autonDriveCommand(0, 90, 2).alongWith(
+      m_armSubsystem.armUpCommand().withTimeout(2)
+    ))
+  );
+
+    //score and satisfy motor watchdog
+    //tilt chSt
+    //climb over chSt
+    //rotate 180
+    //put arm up
+  m_chooser.addOption("M: Score, Mobility, Turn+armUp",
+    m_armSubsystem.armDownCommand().alongWith(
+      m_driveSubsystem.pauseCommand(Constants.kAutonDelay)
+    ).withTimeout(Constants.kAutonDelay)
+    .andThen(
+      m_driveSubsystem.chStMobilityCommand(true)
+    ).andThen(
+      m_driveSubsystem.autonDriveCommand(0, 180, 2).alongWith(
       m_armSubsystem.armUpCommand().withTimeout(2)
     ))
   );
@@ -95,8 +107,11 @@ public class RobotContainer {
     m_chooser.addOption(
       "ANY: Score", 
       m_driveSubsystem.pauseCommand(Constants.kAutonDelay).
-      alongWith(m_armSubsystem.armDownCommand().
-      withTimeout(Constants.kAutonDelay))
+      alongWith(m_armSubsystem.armDownCommand()).
+      withTimeout(Constants.kAutonDelay).andThen(
+        m_driveSubsystem.autonDriveCommand(0, 180, 2).alongWith(
+        m_armSubsystem.armUpCommand().withTimeout(2)
+      ))
     );
 
     // m_chooser.addOption("TEST turn 180", 

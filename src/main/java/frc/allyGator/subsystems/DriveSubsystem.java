@@ -78,7 +78,7 @@ public class DriveSubsystem extends SubsystemBase {
     return Math.abs(getPitch()) > 11;
   }
   public boolean isFlat(){
-    return Math.abs(getPitch()) < 0.75;
+    return Math.abs(getPitch()) < 0.8;
   }
 
   //Teleop Commands
@@ -163,7 +163,7 @@ public class DriveSubsystem extends SubsystemBase {
     return 
     tiltChStCommnad(goingReverse, angleAtBeginning)
     .andThen(
-      autonDriveCommand(0.5 * (goingReverse ? -1 : 1), angleAtBeginning, 2)
+      autonDriveCommand(0.5 * (goingReverse ? -1 : 1), angleAtBeginning, 1.75)
       .until(() -> isFlat())
     )
     .andThen(
@@ -179,11 +179,8 @@ public class DriveSubsystem extends SubsystemBase {
       autonDriveCommand(.8 * (goingReverse ? -1 : 1), 0, 1)
     )
     .andThen(
-      autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .75)
+      autonDriveCommand(.6 * (goingReverse ? -1 : 1), 0, .7)
       .until(() -> isFlat())
-    )
-    .andThen(
-      autonDriveCommand(.4 * (goingReverse ? -1 : 1), 0, .1)
     )
     .andThen(
       autonDriveCommand(0, 180, 1.3)
